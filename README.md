@@ -94,6 +94,7 @@ The database comes pre-seeded with realistic products, categories, coupons, and 
 
 | Role | Email | Password | Access |
 |------|-------|----------|--------|
+| **Admin** | `admin@sweetandsavory.com` | `AdminPassword123!` | Full Admin Portal (`/admin`) & Storefront |
 | **Customer** | `sarah@example.com` | `UserPassword123!` | Storefront, Wishlist, Checkout, Orders |
 
 > **Quick Login Buttons**: The login page includes 1-click demo buttons to fill credentials instantly.
