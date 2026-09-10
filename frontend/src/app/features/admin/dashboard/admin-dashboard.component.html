@@ -1,0 +1,134 @@
+<div class="admin-dashboard-page">
+  <div class="dash-header">
+    <div>
+      <span class="dash-tag">Kitchen & Sales Overview</span>
+      <h1 class="display-section dash-title">Dashboard</h1>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/admin/orders" class="btn btn-sm btn-tomato">
+        <i class="fa-solid fa-bell"></i>
+        <span>Manage Orders</span>
+      </a>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="kpi-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-box" style="height: 120px; border-radius: var(--radius-md);"></div>
+      }
+    </div>
+  } @else if (stats()) {
+    <!-- KPI Metrics Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap icon-tomato">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label">Total Revenue</span>
+          <span class="kpi-number">{{ stats()!.kpis.totalSales | egp }}</span>
+          <small class="kpi-trend"><i class="fa-solid fa-arrow-trend-up"></i> Live kitchen sales</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap icon-gold">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label">Total Orders</span>
+          <span class="kpi-number">{{ stats()!.kpis.totalOrders }}</span>
+          <small class="kpi-trend">{{ stats()!.kpis.pendingOrders }} orders pending action</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap icon-pink">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label">Registered Foodies</span>
+          <span class="kpi-number">{{ stats()!.kpis.totalUsers }}</span>
+          <small class="kpi-trend">Active customers</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap icon-green">
+          <i class="fa-solid fa-pizza-slice"></i>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label">Menu Items</span>
+          <span class="kpi-number">{{ stats()!.kpis.totalProducts }}</span>
+          <small class="kpi-trend">Pizzas, donuts & combos</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Content Split -->
+    <div class="dash-split-grid">
+      <!-- Left: Recent Orders -->
+      <div class="dash-card">
+        <div class="card-header-row">
+          <h3 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Orders</h3>
+          <a routerLink="/admin/orders" class="link-more">View All</a>
+        </div>
+
+        <div class="table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of stats()!.recentOrders; track order._id) {
+                <tr>
+                  <td><span class="font-mono">{{ order.orderNumber }}</span></td>
+                  <td>{{ order.user?.name || order.shippingAddress.fullName }}</td>
+                  <td class="font-bold">{{ order.total | egp }}</td>
+                  <td>
+                    <span class="status-chip" [ngClass]="'status-' + order.orderStatus">
+                      {{ order.orderStatus }}
+                    </span>
+                  </td>
+                  <td>
+                    <a [routerLink]="['/orders', order._id]" class="btn-table-action" title="View details">
+                      <i class="fa-solid fa-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: Top Selling Products -->
+      <div class="dash-card">
+        <div class="card-header-row">
+          <h3 class="card-title"><i class="fa-solid fa-trophy"></i> Bestseller Products</h3>
+        </div>
+
+        <div class="top-products-stack">
+          @for (item of stats()!.topProducts; track item._id) {
+            <div class="top-prod-item">
+              <img [src]="item.image" [alt]="item._id" class="top-prod-img" />
+              <div class="top-prod-info">
+                <strong>{{ item._id }}</strong>
+                <small>{{ item.totalQuantity }} items ordered</small>
+              </div>
+              <div class="top-prod-rev font-bold">{{ item.totalRevenue | egp }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

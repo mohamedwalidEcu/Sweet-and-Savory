@@ -1,0 +1,118 @@
+<div class="admin-coupons-page">
+  <div class="dash-header">
+    <div>
+      <span class="dash-tag">Promotions Engine</span>
+      <h1 class="display-section dash-title">Discount Codes</h1>
+    </div>
+
+    <button class="btn btn-tomato" (click)="openAddModal()">
+      <svg lucidePlus class="lucide-icon-sm"></svg>
+      <span>Create New Coupon</span>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="skeleton-box" style="height: 350px; border-radius: var(--radius-md);"></div>
+  } @else {
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Type</th>
+            <th>Discount</th>
+            <th>Min Order</th>
+            <th>Usage</th>
+            <th>Expiry</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (coupon of coupons(); track coupon._id) {
+            <tr>
+              <td>
+                <span class="coupon-code-mono">{{ coupon.code }}</span>
+              </td>
+              <td>
+                <span class="type-badge">{{ coupon.type }}</span>
+              </td>
+              <td>
+                <strong>{{ coupon.type === 'percentage' ? (coupon.value + '%') : (coupon.value | egp) }}</strong>
+              </td>
+              <td>{{ (coupon.minOrder || 0) | egp }}</td>
+              <td>{{ coupon.usageCount }} / {{ coupon.usageLimit }}</td>
+              <td>{{ coupon.expirationDate | date:'mediumDate' }}</td>
+              <td>
+                <span class="status-pill" [class.is-active]="coupon.isActive">
+                  {{ coupon.isActive ? 'Active' : 'Expired' }}
+                </span>
+              </td>
+              <td>
+                <button class="btn-action-del" (click)="onDelete(coupon._id)" title="Delete">
+                  <svg lucideTrash2 class="lucide-icon-sm"></svg>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Add Coupon Modal -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Create Coupon Code</h3>
+          <button class="modal-close-btn" (click)="closeModal()"><svg lucideX class="lucide-icon-md"></svg></button>
+        </div>
+
+        <form (ngSubmit)="onCreateCoupon()" class="modal-form">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Promo Code *</label>
+              <input type="text" class="form-control" [(ngModel)]="formData.code" name="code" placeholder="e.g. FLASH25" uppercase required />
+            </div>
+            <div class="form-group">
+              <label>Type *</label>
+              <select class="form-control" [(ngModel)]="formData.type" name="type" required>
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (EGP / ج.م)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Discount Value *</label>
+              <input type="number" class="form-control" [(ngModel)]="formData.value" name="value" required />
+            </div>
+            <div class="form-group">
+              <label>Minimum Order Amount (EGP / ج.م)</label>
+              <input type="number" class="form-control" [(ngModel)]="formData.minOrder" name="minOrder" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" class="form-control" [(ngModel)]="formData.description" name="description" placeholder="e.g. 25% off weekend pizzas" />
+          </div>
+
+          <div class="form-group">
+            <label>Expiration Date *</label>
+            <input type="date" class="form-control" [(ngModel)]="formData.expirationDate" name="expirationDate" required />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-tomato" [disabled]="isSaving()">
+              <span>{{ isSaving() ? 'Creating...' : 'Create Coupon' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

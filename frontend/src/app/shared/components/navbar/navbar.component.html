@@ -1,0 +1,243 @@
+<header class="site-header" [class.is-scrolled]="isScrolled()">
+  <!-- Top announcement bar -->
+  <div class="announcement-bar">
+    <div class="container-wide announcement-inner">
+      <div class="promo-text">
+        <span class="hot-badge">PROMO</span>
+        <span>{{ translationService.currentLang() === 'ar' ? 'استخدم كود WELCOME10 لخصم 10% على طلبك الأول! • توصيل مجاني للطلبات فوق 200 ج.م' : 'Use code WELCOME10 for 10% off your first order! • Free delivery over 200 EGP' }}</span>
+      </div>
+      <div class="announcement-links">
+        <button class="mini-btn" (click)="translationService.toggleLanguage()" aria-label="Toggle language">
+          <svg lucideGlobe class="lucide-icon-sm"></svg>
+          <span>{{ translationService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
+        </button>
+        <span class="sep">|</span>
+        <button class="mini-btn" (click)="themeService.toggleTheme()" aria-label="Toggle dark mode">
+          @if (themeService.isDark()) {
+            <svg lucideSun class="lucide-icon-sm"></svg>
+          } @else {
+            <svg lucideMoon class="lucide-icon-sm"></svg>
+          }
+          <span>{{ themeService.isDark() ? (translationService.currentLang() === 'ar' ? 'الوضع الفاتح' : 'Light Mode') : (translationService.currentLang() === 'ar' ? 'الوضع الداكن' : 'Dark Mode') }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="main-nav">
+    <div class="container-wide nav-inner">
+      <!-- Mobile Menu Trigger -->
+      <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" aria-label="Open menu">
+        @if (isMobileOpen()) {
+          <svg lucideX class="lucide-icon-md"></svg>
+        } @else {
+          <svg lucideMenu class="lucide-icon-md"></svg>
+        }
+      </button>
+
+      <!-- Brand Logo -->
+      <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()">
+        <span class="brand-sweet">Sweet</span>
+        <span class="brand-amp">&</span>
+        <span class="brand-savory">Savory</span>
+        <span class="brand-dot"></span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <div class="desktop-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+          {{ 'nav.home' | translate }}
+        </a>
+        <a routerLink="/menu" routerLinkActive="active" class="nav-link">
+          {{ 'nav.menu' | translate }}
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'pizza' }" routerLinkActive="active" class="nav-link nav-pill-pizza">
+          <svg lucidePizza class="lucide-icon-xs text-tomato"></svg>
+          <span>{{ 'nav.pizza' | translate }}</span>
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'donuts' }" routerLinkActive="active" class="nav-link nav-pill-donut">
+          <svg lucideDonut class="lucide-icon-xs text-pink"></svg>
+          <span>{{ 'nav.donuts' | translate }}</span>
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'combos' }" routerLinkActive="active" class="nav-link nav-pill-combo">
+          <svg lucideFlame class="lucide-icon-xs text-gold"></svg>
+          <span>{{ 'nav.combos' | translate }}</span>
+        </a>
+        <a routerLink="/offers" routerLinkActive="active" class="nav-link">
+          {{ 'nav.offers' | translate }}
+        </a>
+      </div>
+
+      <!-- Right Action Icons & Auth -->
+      <div class="nav-actions">
+        <!-- Wishlist (ONLY SHOWN WHEN LOGGED IN AND NOT ADMIN) -->
+        @if (authService.isLoggedIn() && !authService.isAdmin()) {
+          <a routerLink="/wishlist" class="action-icon-btn" aria-label="Wishlist">
+            <svg lucideHeart class="lucide-icon-md" [class.text-pink]="wishlistService.count() > 0"></svg>
+            @if (wishlistService.count() > 0) {
+              <span class="count-badge count-badge-pink">{{ wishlistService.count() }}</span>
+            }
+          </a>
+        }
+
+        <!-- Cart Bag -->
+        <a routerLink="/cart" class="cart-pill-btn" aria-label="Cart">
+          <div class="cart-icon-wrapper">
+            <svg lucideShoppingBag class="lucide-icon-md"></svg>
+            @if (cartService.itemCount() > 0) {
+              <span class="count-badge count-badge-tomato">{{ cartService.itemCount() }}</span>
+            }
+          </div>
+          <span class="cart-subtotal d-none-mobile">{{ cartService.subtotal() | egp }}</span>
+        </a>
+
+        <!-- User Menu -->
+        @if (authService.isLoggedIn()) {
+          <div class="user-dropdown-container">
+            <button class="user-avatar-btn" (click)="$event.stopPropagation(); toggleUserDropdown()" aria-label="User profile menu">
+              @if (authService.currentUser()?.avatar) {
+                <img [src]="authService.currentUser()?.avatar" alt="Avatar" class="avatar-img" />
+              } @else {
+                <div class="avatar-fallback">{{ authService.currentUser()?.name?.charAt(0) || 'U' }}</div>
+              }
+              <span class="user-first-name d-none-mobile">{{ getFirstName() }}</span>
+              <svg lucideChevronDown class="chevron-icon" [class.rotated]="isUserDropdownOpen()"></svg>
+            </button>
+
+            @if (isUserDropdownOpen()) {
+              <div class="user-menu-dropdown animate-fade-in" (click)="$event.stopPropagation()">
+                <div class="dropdown-header">
+                  <div class="user-info-name">{{ authService.currentUser()?.name }}</div>
+                  <div class="user-info-email">{{ authService.currentUser()?.email }}</div>
+                  @if (authService.isAdmin()) {
+                    <span class="admin-badge">{{ translationService.currentLang() === 'ar' ? 'مسؤول النظام' : 'Admin Access' }}</span>
+                  }
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                @if (authService.isAdmin()) {
+                  <a routerLink="/admin" class="dropdown-item" (click)="closeUserDropdown()">
+                    <svg lucideLayoutDashboard class="lucide-icon-sm"></svg>
+                    <span>{{ 'nav.dashboard' | translate }}</span>
+                  </a>
+                }
+
+                @if (!authService.isAdmin()) {
+                  <a routerLink="/orders" class="dropdown-item" (click)="closeUserDropdown()">
+                    <svg lucideReceipt class="lucide-icon-sm"></svg>
+                    <span>{{ 'nav.myOrders' | translate }}</span>
+                  </a>
+                }
+
+                <a routerLink="/profile" class="dropdown-item" (click)="closeUserDropdown()">
+                  <svg lucideUser class="lucide-icon-sm"></svg>
+                  <span>{{ 'nav.profile' | translate }}</span>
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <button class="dropdown-item dropdown-logout" (click)="onLogout()">
+                  <svg lucideLogOut class="lucide-icon-sm"></svg>
+                  <span>{{ 'nav.logout' | translate }}</span>
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="auth-buttons">
+            <a routerLink="/login" class="btn btn-sm btn-ghost">{{ 'nav.login' | translate }}</a>
+            <a routerLink="/register" class="btn btn-sm btn-tomato d-none-mobile">{{ 'nav.register' | translate }}</a>
+          </div>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Drawer -->
+  @if (isMobileOpen()) {
+    <div class="mobile-drawer animate-fade-in">
+      <!-- Quick mobile preference controls (Language & Dark Mode) -->
+      <div class="mobile-quick-controls">
+        <button class="mobile-ctrl-btn" (click)="translationService.toggleLanguage()">
+          <svg lucideGlobe class="lucide-icon-sm"></svg>
+          <span>{{ translationService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
+        </button>
+        <button class="mobile-ctrl-btn" (click)="themeService.toggleTheme()">
+          @if (themeService.isDark()) {
+            <svg lucideSun class="lucide-icon-sm"></svg>
+            <span>{{ translationService.currentLang() === 'ar' ? 'فاتح' : 'Light' }}</span>
+          } @else {
+            <svg lucideMoon class="lucide-icon-sm"></svg>
+            <span>{{ translationService.currentLang() === 'ar' ? 'داكن' : 'Dark' }}</span>
+          }
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a routerLink="/" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucideHome class="lucide-icon-sm"></svg>
+          <span>{{ 'nav.home' | translate }}</span>
+        </a>
+        <a routerLink="/menu" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucideUtensils class="lucide-icon-sm"></svg>
+          <span>{{ 'nav.menu' | translate }}</span>
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'pizza' }" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucidePizza class="lucide-icon-sm text-tomato"></svg>
+          <span>{{ 'nav.pizza' | translate }}</span>
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'donuts' }" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucideDonut class="lucide-icon-sm text-pink"></svg>
+          <span>{{ 'nav.donuts' | translate }}</span>
+        </a>
+        <a routerLink="/menu" [queryParams]="{ category: 'combos' }" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucideFlame class="lucide-icon-sm text-gold"></svg>
+          <span>{{ 'nav.combos' | translate }}</span>
+        </a>
+        <a routerLink="/offers" (click)="closeMobileMenu()" class="mobile-link">
+          <svg lucideTag class="lucide-icon-sm"></svg>
+          <span>{{ 'nav.offers' | translate }}</span>
+        </a>
+
+        <!-- Wishlist link in mobile drawer (ONLY SHOWN WHEN LOGGED IN AND NOT ADMIN) -->
+        @if (authService.isLoggedIn() && !authService.isAdmin()) {
+          <a routerLink="/wishlist" (click)="closeMobileMenu()" class="mobile-link">
+            <svg lucideHeart class="lucide-icon-sm text-pink"></svg>
+            <span>{{ 'nav.wishlist' | translate }} ({{ wishlistService.count() }})</span>
+          </a>
+        }
+
+        @if (authService.isLoggedIn()) {
+          @if (!authService.isAdmin()) {
+            <a routerLink="/orders" (click)="closeMobileMenu()" class="mobile-link">
+              <svg lucideReceipt class="lucide-icon-sm"></svg>
+              <span>{{ 'nav.myOrders' | translate }}</span>
+            </a>
+          }
+          @if (authService.isAdmin()) {
+            <a routerLink="/admin" (click)="closeMobileMenu()" class="mobile-link mobile-admin">
+              <svg lucideLayoutDashboard class="lucide-icon-sm"></svg>
+              <span>{{ 'nav.dashboard' | translate }}</span>
+            </a>
+          }
+        }
+      </div>
+
+      <div class="mobile-footer">
+        @if (!authService.isLoggedIn()) {
+          <div class="mobile-auth-grid">
+            <a routerLink="/login" (click)="closeMobileMenu()" class="btn btn-outline">{{ 'nav.login' | translate }}</a>
+            <a routerLink="/register" (click)="closeMobileMenu()" class="btn btn-tomato">{{ 'nav.register' | translate }}</a>
+          </div>
+        } @else {
+          <button class="btn btn-outline w-100" (click)="onLogout()">
+            <svg lucideLogOut class="lucide-icon-sm"></svg>
+            <span>{{ 'nav.logout' | translate }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</header>

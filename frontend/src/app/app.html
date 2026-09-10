@@ -1,0 +1,13 @@
+<app-toast></app-toast>
+
+
+  <app-navbar></app-navbar>
+
+
+<main class="app-main" [class.is-admin-view]="isAdminRoute">
+  <router-outlet></router-outlet>
+</main>
+
+
+  <app-footer></app-footer>
+

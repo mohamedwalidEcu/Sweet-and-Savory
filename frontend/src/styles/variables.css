@@ -1,0 +1,108 @@
+/* Sweet & Savory Brand Palette & Design Tokens (Plain CSS) */
+
+:root {
+  /* Light Theme (Editorial Warm Cream & Deep Charcoal) */
+  --bg-primary: #FFF9F2;
+  --bg-secondary: #FFF1E3;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-alt: #F8ECE0;
+  --bg-subtle: #F5EAE1;
+
+  --text-primary: #1C120C;
+  --text-secondary: #6B5C52;
+  --text-muted: #9E8E84;
+  --text-inverse: #FFFFFF;
+
+  /* Signature Brand Accents */
+  --color-tomato: #E54523;
+  --color-tomato-hover: #CC3616;
+  --color-tomato-light: #FDEEEB;
+  
+  --color-pink: #E84589;
+  --color-pink-hover: #CF2B6F;
+  --color-pink-light: #FDECF4;
+
+  --color-gold: #F0A31E;
+  --color-gold-light: #FEF7E8;
+
+  --color-green: #2B9348;
+  --color-green-light: #EBF7EE;
+
+  --color-charcoal: #1C120C;
+  --color-cream: #FFF9F2;
+
+  /* Borders & Dividers */
+  --border-subtle: #EFE4D8;
+  --border-strong: #DBCDC0;
+  --border-dark: #2B1D15;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(28, 18, 12, 0.05);
+  --shadow-md: 0 6px 18px rgba(28, 18, 12, 0.08);
+  --shadow-lg: 0 16px 36px rgba(28, 18, 12, 0.12);
+  --shadow-xl: 0 20px 45px rgba(28, 18, 12, 0.15);
+  --shadow-elevated: 0 24px 54px rgba(28, 18, 12, 0.16);
+  --shadow-hard: 4px 4px 0px #1C120C;
+
+  /* Border Radii */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Typography Tokens */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-accent: 'Caveat', cursive;
+  --font-arabic: 'Cairo', 'Inter', sans-serif;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark Mode Tokens */
+[data-theme="dark"] {
+  --bg-primary: #120E0C;
+  --bg-secondary: #1B1512;
+  --bg-surface: #221B17;
+  --bg-surface-elevated: #2A211D;
+  --bg-card: #221B17;
+  --bg-alt: #181310;
+  --bg-subtle: #2B221E;
+
+  --text-primary: #F9EFE7;
+  --text-secondary: #BCAE9F;
+  --text-muted: #85766B;
+  --text-inverse: #1C120C;
+
+  --color-tomato: #FF5A36;
+  --color-tomato-hover: #E54523;
+  --color-tomato-light: #3D1F18;
+
+  --color-pink: #FF5C9D;
+  --color-pink-hover: #E84589;
+  --color-pink-light: #3D1927;
+
+  --color-gold: #FFB338;
+  --color-gold-light: #3D2B12;
+
+  --color-green: #40B861;
+  --color-green-light: #16361F;
+
+  --border-subtle: #332923;
+  --border-strong: #4A3C34;
+  --border-dark: #F9EFE7;
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 20px 45px rgba(0, 0, 0, 0.6);
+  --shadow-hard: 4px 4px 0px rgba(255, 255, 255, 0.15);
+}

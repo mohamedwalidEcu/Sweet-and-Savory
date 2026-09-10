@@ -1,0 +1,13 @@
+<div class="star-rating" [attr.aria-label]="rating + ' out of 5 stars'">
+  @for (star of stars; track $index) {
+    <i
+      class="fa-star star-icon"
+      [class.fa-solid]="star === 'full'"
+      [class.fa-regular]="star === 'empty'"
+      [class.fa-star-half-stroke]="star === 'half'"
+    ></i>
+  }
+  @if (showNumber) {
+    <span class="rating-number">{{ rating | number:'1.1-1' }}</span>
+  }
+</div>

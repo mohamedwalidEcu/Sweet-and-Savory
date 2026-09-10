@@ -1,0 +1,471 @@
+<div class="admin-products-page">
+  <div class="dash-header">
+    <div>
+      <span class="dash-tag">Menu Catalog</span>
+      <h1 class="display-section dash-title">Product Management</h1>
+    </div>
+
+    <button class="btn btn-tomato" (click)="openAddModal()">
+      <svg lucidePlus class="lucide-icon-sm"></svg>
+      <span>Add New Food Item</span>
+    </button>
+  </div>
+
+  <!-- Products Table -->
+  @if (isLoading()) {
+    <div class="skeleton-box" style="height: 400px; border-radius: var(--radius-md);"></div>
+  } @else {
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Rating</th>
+            <th>Featured</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products(); track product._id) {
+            <tr>
+              <td>
+                <div class="product-cell">
+                  <img [src]="product.images[0]" [alt]="product.name" class="prod-thumb" />
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <small class="slug-text">{{ product.slug }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="category-badge">{{ product.categorySlug | uppercase }}</span>
+              </td>
+              <td>
+                <div class="price-stack">
+                  <strong>{{ product.price | egp }}</strong>
+                  @if (product.discountPrice) {
+                    <small class="text-danger">Sale: {{ product.discountPrice | egp }}</small>
+                  }
+                </div>
+              </td>
+              <td>
+                <span class="stock-badge" [class.low-stock]="product.stock < 10">
+                  {{ product.stock }} units
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="rating-interactive-btn"
+                  (click)="openReviewsModal(product)"
+                  title="View reviews and ratings"
+                >
+                  <svg lucideStar class="star-icon-lucide"></svg>
+                  <strong>{{ product.rating }}</strong>
+                  <span class="review-count-num">({{ product.reviewCount }})</span>
+                  <span class="view-chip">View</span>
+                </button>
+              </td>
+              <td>
+                <span class="feat-pill" [class.is-feat]="product.isFeatured">
+                  {{ product.isFeatured ? 'Featured' : 'Standard' }}
+                </span>
+              </td>
+              <td>
+                <div class="actions-group">
+                  <button class="btn-action-sm" (click)="openEditModal(product)" title="Edit">
+                    <svg lucidePenSquare class="lucide-icon-sm"></svg>
+                  </button>
+                  <button class="btn-action-sm text-danger" (click)="onDelete(product._id)" title="Delete">
+                    <svg lucideTrash2 class="lucide-icon-sm"></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Add / Edit Modal Overlay -->
+  @if (isModalOpen()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingProductId ? 'Edit Food Item' : 'Add New Food Item' }}</h3>
+          <button class="modal-close-btn" (click)="closeModal()"><svg lucideX class="lucide-icon-md"></svg></button>
+        </div>
+
+        <form (ngSubmit)="onSaveProduct()" class="modal-form">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Product Name (English) *</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.name"
+                name="name"
+                required
+                placeholder="e.g. Margherita Classica"
+              />
+            </div>
+            <div class="form-group">
+              <label>Product Name (Arabic - Optional)</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="formData.nameAr"
+                name="nameAr"
+                placeholder="e.g. Arabic title (optional)"
+                dir="rtl"
+              />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Category *</label>
+              <select class="form-control" [(ngModel)]="formData.categorySlug" name="categorySlug" required>
+                <option value="pizza">Artisan Pizza</option>
+                <option value="donuts">Handcrafted Donuts</option>
+                <option value="combos">Combo Meals</option>
+                <option value="drinks">Chilled Drinks</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Stock Units *</label>
+              <input type="number" class="form-control" [(ngModel)]="formData.stock" name="stock" required min="0" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description (English) *</label>
+            <textarea
+              class="form-control"
+              rows="2"
+              [(ngModel)]="formData.description"
+              name="description"
+              required
+              placeholder="Describe ingredients, crust, preparation..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Description (Arabic - Optional)</label>
+            <textarea
+              class="form-control"
+              rows="2"
+              [(ngModel)]="formData.descriptionAr"
+              name="descriptionAr"
+              placeholder="Arabic description for bilingual menu..."
+              dir="rtl"
+            ></textarea>
+          </div>
+
+          <!-- Price & Discount Section -->
+          <div class="pricing-card-section">
+            <div class="form-group">
+              <label>Base Price (EGP) *</label>
+              <input
+                type="number"
+                step="0.01"
+                class="form-control"
+                [(ngModel)]="formData.price"
+                name="price"
+                required
+                min="1"
+                placeholder="e.g. 150"
+              />
+            </div>
+
+            <!-- Discount Toggle -->
+            <div class="discount-toggle-card">
+              <label class="toggle-checkbox-label">
+                <input
+                  type="checkbox"
+                  class="custom-check-input"
+                  [(ngModel)]="hasDiscount"
+                  (change)="onToggleDiscount()"
+                  name="hasDiscount"
+                />
+                <div class="checkbox-text-group">
+                  <strong>Apply Discount to this Item</strong>
+                  <small>Enable discounted price and show sale savings badge in the menu</small>
+                </div>
+              </label>
+
+              @if (hasDiscount) {
+                <div class="discount-active-box mt-2">
+                  <div class="form-group mb-1">
+                    <label>Discount Sale Price (EGP) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control"
+                      [(ngModel)]="formData.discountPrice"
+                      name="discountPrice"
+                      [placeholder]="'Must be less than ' + formData.price + ' EGP'"
+                      required
+                    />
+                  </div>
+
+                  @if (formData.discountPrice && formData.price && formData.discountPrice < formData.price) {
+                    <div class="discount-savings-pill">
+                      🎉 Save {{ ((formData.price - formData.discountPrice) / formData.price * 100) | number:'1.0-0' }}%
+                      (Customers save {{ (formData.price - formData.discountPrice) | number:'1.2-2' }} EGP)
+                    </div>
+                  }
+
+                  @if (formData.discountPrice && formData.price && formData.discountPrice >= formData.price) {
+                    <div class="discount-warning-msg">
+                      ⚠️ Notice: Discount price ({{ formData.discountPrice }} EGP) must be strictly less than base price ({{
+                        formData.price
+                      }} EGP)!
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Customizations: Sizes & Portions -->
+          <div class="customization-manager-card">
+            <div class="custom-card-header">
+              <div>
+                <h4 class="custom-card-title">Product Sizes & Pricing</h4>
+                <p class="custom-card-desc">Configure available sizes and price adjustments for each size (0 for base size)</p>
+              </div>
+            </div>
+
+            <!-- Existing Sizes List -->
+            @if (formData.availableSizes.length > 0) {
+              <div class="custom-items-list">
+                @for (size of formData.availableSizes; track $index) {
+                  <div class="custom-item-row">
+                    <div class="custom-item-main">
+                      <span class="custom-item-name">{{ size.name }}</span>
+                      <span class="custom-item-price-tag">
+                        {{ size.priceAdjustment > 0 ? '+ ' + size.priceAdjustment + ' EGP' : 'Base Price (+0 EGP)' }}
+                      </span>
+                      @if (size.isDefault) {
+                        <span class="default-badge">Default</span>
+                      }
+                    </div>
+                    <button type="button" class="btn-remove-custom" (click)="removeSize($index)" title="Remove size">
+                      <svg lucideTrash2 class="lucide-icon-xs text-danger"></svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-custom-hint">No custom sizes configured (base price will be used).</div>
+            }
+
+            <!-- Add Size Row -->
+            <div class="add-custom-row mt-2">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="newSizeName"
+                name="newSizeName"
+                placeholder="Size name (e.g. Medium 12 inch)"
+              />
+              <div class="price-input-wrap">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="newSizePrice"
+                  name="newSizePrice"
+                  placeholder="Price diff EGP (+)"
+                  min="0"
+                />
+              </div>
+              <button type="button" class="btn btn-sm btn-outline" (click)="addSize()">
+                <svg lucidePlus class="lucide-icon-xs"></svg>
+                <span>Add Size</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Customizations: Toppings & Flavors -->
+          <div class="customization-manager-card">
+            <div class="custom-card-header">
+              <div>
+                <h4 class="custom-card-title">Toppings & Add-ons</h4>
+                <p class="custom-card-desc">Optional extras customers can add to customize their order (extra price in EGP)</p>
+              </div>
+            </div>
+
+            <!-- Existing Toppings List -->
+            @if (formData.availableToppings.length > 0) {
+              <div class="custom-items-list">
+                @for (top of formData.availableToppings; track $index) {
+                  <div class="custom-item-row">
+                    <div class="custom-item-main">
+                      <span class="custom-item-name">{{ top.name }}</span>
+                      <span class="custom-item-price-tag">+ {{ top.price }} EGP</span>
+                    </div>
+                    <button type="button" class="btn-remove-custom" (click)="removeTopping($index)" title="Remove add-on">
+                      <svg lucideTrash2 class="lucide-icon-xs text-danger"></svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-custom-hint">No custom add-ons configured for this item.</div>
+            }
+
+            <!-- Add Topping Row -->
+            <div class="add-custom-row mt-2">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="newToppingName"
+                name="newToppingName"
+                placeholder="Option name (e.g. Extra Mozzarella, Hot Sauce)"
+              />
+              <div class="price-input-wrap">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="newToppingPrice"
+                  name="newToppingPrice"
+                  placeholder="Extra price EGP"
+                  min="0"
+                />
+              </div>
+              <button type="button" class="btn btn-sm btn-outline" (click)="addTopping()">
+                <svg lucidePlus class="lucide-icon-xs"></svg>
+                <span>Add Option</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Primary Image URL *</label>
+            <input
+              type="url"
+              class="form-control"
+              [(ngModel)]="formData.imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Badge Text</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="formData.badgeText"
+              name="badgeText"
+              placeholder="e.g. Chef's Special, Best Seller"
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-tomato" [disabled]="isSaving()">
+              <span>{{ isSaving() ? 'Saving...' : 'Save Product' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Customer Reviews Inspection Modal -->
+  @if (isReviewsModalOpen()) {
+    <div class="modal-backdrop" (click)="closeReviewsModal()">
+      <div class="modal-dialog reviews-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="reviews-header-info">
+            <h3>Customer Reviews & Ratings</h3>
+            <div class="reviews-header-sub">
+              <span class="prod-badge-name">{{ selectedProductForReviews()?.name }}</span>
+              <span class="rating-summary-pill">
+                <svg lucideStar class="star-icon-lucide"></svg>
+                <strong>{{ selectedProductForReviews()?.rating }}</strong>
+                <span class="pill-count">({{ productReviews().length }} reviews)</span>
+              </span>
+            </div>
+          </div>
+          <button class="modal-close-btn" (click)="closeReviewsModal()">
+            <svg lucideX class="lucide-icon-md"></svg>
+          </button>
+        </div>
+
+        <div class="reviews-modal-body">
+          @if (isLoadingReviews()) {
+            <div class="reviews-loading-state">
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          } @else if (productReviews().length === 0) {
+            <div class="empty-reviews-box">
+              <svg lucideMessageSquare class="empty-reviews-icon"></svg>
+              <h4>No reviews yet</h4>
+              <p>No customer has left a review or comment for this item yet.</p>
+            </div>
+          } @else {
+            <div class="reviews-list">
+              @for (review of productReviews(); track review._id) {
+                <div class="review-item-card">
+                  <div class="review-item-header">
+                    <div class="reviewer-meta">
+                      @if (review.userAvatar) {
+                        <img [src]="review.userAvatar" [alt]="review.userName" class="reviewer-avatar-img" />
+                      } @else {
+                        <div class="reviewer-avatar-placeholder">
+                          {{ review.userName ? review.userName.charAt(0).toUpperCase() : 'U' }}
+                        </div>
+                      }
+                      <div class="reviewer-info">
+                        <span class="reviewer-name">{{ review.userName || 'Sweet & Savory Customer' }}</span>
+                        <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="review-rating-actions">
+                      <div class="review-stars-badge">
+                        <span class="stars-visual">
+                          @for (s of [1,2,3,4,5]; track s) {
+                            <svg lucideStar class="single-star-icon" [class.star-filled]="s <= review.rating"></svg>
+                          }
+                        </span>
+                        <strong class="rating-number">{{ review.rating }}/5</strong>
+                      </div>
+
+                      <button
+                        type="button"
+                        class="btn-delete-review"
+                        (click)="onDeleteReview(review._id)"
+                        title="Delete this review"
+                      >
+                        <svg lucideTrash2 class="lucide-icon-sm"></svg>
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  @if (review.comment) {
+                    <p class="review-comment-text">"{{ review.comment }}"</p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="closeReviewsModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

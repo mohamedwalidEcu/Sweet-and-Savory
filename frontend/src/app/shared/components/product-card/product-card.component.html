@@ -1,0 +1,84 @@
+<article class="food-card" [class.is-donut]="product.categorySlug === 'donuts'">
+  <!-- Card Image & Floating Badges -->
+  <div class="card-media">
+    <a [routerLink]="['/product', product.slug]" class="image-link" aria-label="View product details">
+      <img
+        [src]="product.images[0]"
+        [alt]="product.name"
+        loading="lazy"
+        class="product-img"
+      />
+    </a>
+
+    <!-- Badges -->
+    <div class="badge-stack">
+      @if (product.badgeText) {
+        <span class="badge" [ngClass]="product.categorySlug === 'donuts' ? 'badge-pink' : 'badge-tomato'">
+          {{ getBadgeText() }}
+        </span>
+      }
+      @if (product.discountPrice) {
+        <span class="badge badge-gold">
+          {{ getDiscountBadge() }}
+        </span>
+      }
+    </div>
+
+    <!-- Wishlist Toggle Button (ONLY WHEN LOGGED IN AND NOT ADMIN) -->
+    @if (authService.isLoggedIn() && !authService.isAdmin()) {
+      <button
+        class="favorite-btn"
+        [class.active]="wishlistService.isWishlisted(product._id)"
+        (click)="onToggleWishlist($event)"
+        [attr.aria-label]="wishlistService.isWishlisted(product._id) ? 'Remove from favorites' : 'Save to favorites'"
+      >
+        <svg
+          lucideHeart
+          class="lucide-icon-sm"
+          [class.fill-current]="wishlistService.isWishlisted(product._id)"
+          [class.text-tomato]="wishlistService.isWishlisted(product._id)"
+        ></svg>
+      </button>
+    }
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-body">
+    <div class="card-meta">
+      <span class="category-pill">{{ getCategoryName() }}</span>
+      <app-star-rating [rating]="product.rating" [showNumber]="true"></app-star-rating>
+    </div>
+
+    <h3 class="product-title">
+      <a [routerLink]="['/product', product.slug]">{{ getProductName() }}</a>
+    </h3>
+
+    <p class="product-desc">{{ getProductDescription() }}</p>
+
+    <!-- Pricing & Add to Cart -->
+    <div class="card-footer">
+      <div class="price-box">
+        @if (product.discountPrice) {
+          <span class="current-price">{{ product.discountPrice | egp }}</span>
+          <span class="original-price">{{ product.price | egp }}</span>
+        } @else {
+          <span class="current-price">{{ product.price | egp }}</span>
+        }
+      </div>
+
+      <div class="action-box">
+        @if (hasCustomizations()) {
+          <a [routerLink]="['/product', product.slug]" class="btn-action btn-customize">
+            <span>{{ 'menu.customize' | translate }}</span>
+            <svg lucideSlidersHorizontal class="lucide-icon-xs"></svg>
+          </a>
+        } @else {
+          <button class="btn-action btn-add" (click)="onQuickAdd($event)" [disabled]="product.stock <= 0">
+            <span>{{ 'menu.addToCart' | translate }}</span>
+            <svg lucidePlus class="lucide-icon-xs"></svg>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</article>

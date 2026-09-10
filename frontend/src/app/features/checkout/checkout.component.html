@@ -1,0 +1,271 @@
+<div class="checkout-page">
+  <div class="container-wide">
+    <!-- Header -->
+    <div class="page-header">
+      <span class="tag-script">{{ isArabic() ? 'توصيل ساخن وسريع' : 'Fast & Fresh Delivery' }}</span>
+      <h1 class="display-section page-title">{{ 'checkout.title' | translate }}</h1>
+    </div>
+
+    @if (cartService.items().length === 0) {
+      <div class="empty-notice">
+        <p>{{ isArabic() ? 'سلة مشترياتك فارغة حالياً. يرجى اختيار أطباقك قبل إتمام الطلب.' : 'Your cart is currently empty. Please add items before checking out.' }}</p>
+        <a routerLink="/menu" class="btn btn-tomato mt-3">{{ 'orders.browseMenu' | translate }}</a>
+      </div>
+    } @else {
+      <form (ngSubmit)="onSubmitOrder()" class="checkout-layout-grid">
+        <!-- Left: Delivery & Payment Details -->
+        <div class="checkout-form-col">
+          <!-- 1. Delivery Details -->
+          <div class="form-section-card">
+            <h3 class="section-title">
+              <span class="step-circle">1</span>
+              <span>{{ 'checkout.deliveryDetails' | translate }}</span>
+            </h3>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="fullName">{{ 'checkout.fullName' | translate }} *</label>
+                <input
+                  id="fullName"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="shippingAddress.fullName"
+                  name="fullName"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="phone">{{ 'checkout.phone' | translate }} *</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  class="form-control"
+                  [class.is-invalid]="(phoneTouched() || hasSubmitted()) && !isPhoneValid()"
+                  placeholder="+20 100 123 4567"
+                  [(ngModel)]="shippingAddress.phone"
+                  (blur)="phoneTouched.set(true)"
+                  name="phone"
+                  required
+                />
+                @if ((phoneTouched() || hasSubmitted()) && !isPhoneValid()) {
+                  <span class="form-feedback-error">
+                    {{ 'checkout.phoneInvalid' | translate }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="street">{{ 'checkout.street' | translate }} *</label>
+              <input
+                id="street"
+                type="text"
+                class="form-control"
+                placeholder="e.g. 14 Al-Ahram Blvd, Building 3, Apt 4B"
+                [(ngModel)]="shippingAddress.street"
+                name="street"
+                required
+              />
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="city">{{ 'checkout.city' | translate }} *</label>
+                <input
+                  id="city"
+                  type="text"
+                  class="form-control"
+                  placeholder="Cairo / Giza"
+                  [(ngModel)]="shippingAddress.city"
+                  name="city"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="notes">{{ 'checkout.notes' | translate }}</label>
+                <input
+                  id="notes"
+                  type="text"
+                  class="form-control"
+                  placeholder="e.g. Buzz 4B, please ring bell"
+                  [(ngModel)]="shippingAddress.deliveryNotes"
+                  name="deliveryNotes"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Payment Details -->
+          <div class="form-section-card">
+            <h3 class="section-title">
+              <span class="step-circle">2</span>
+              <span>{{ 'checkout.paymentMethod' | translate }}</span>
+            </h3>
+
+            <div class="payment-methods-grid">
+              <label class="payment-method-card" [class.selected]="paymentMethod === 'simulated_card'">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="simulated_card"
+                  [(ngModel)]="paymentMethod"
+                />
+                <div class="pm-content">
+                  <div class="pm-header">
+                    <svg lucideCreditCard class="pm-icon lucide-icon-md"></svg>
+                    <strong>{{ 'checkout.card' | translate }}</strong>
+                  </div>
+                  <span class="pm-desc">{{ isArabic() ? 'محاكاة دفع فورية بالبطاقة البنكية' : 'Instant card payment simulation (Stripe ready)' }}</span>
+                </div>
+              </label>
+
+              <label class="payment-method-card" [class.selected]="paymentMethod === 'cash_on_delivery'">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cash_on_delivery"
+                  [(ngModel)]="paymentMethod"
+                />
+                <div class="pm-content">
+                  <div class="pm-header">
+                    <svg lucideBanknote class="pm-icon lucide-icon-md"></svg>
+                    <strong>{{ 'checkout.cod' | translate }}</strong>
+                  </div>
+                  <span class="pm-desc">{{ isArabic() ? 'ادفع نقداً لمندوب التوصيل عند استلام الطلب' : 'Pay cash to driver upon food arrival' }}</span>
+                </div>
+              </label>
+            </div>
+
+            @if (paymentMethod === 'simulated_card') {
+              <div class="simulated-card-box animate-fade-in">
+                <div class="card-chip-row">
+                  <svg lucideCpu class="chip-icon lucide-icon-lg text-gold"></svg>
+                  <i class="fa-brands fa-cc-mastercard brand-icon"></i>
+                </div>
+
+                <div class="form-group">
+                  <label>{{ isArabic() ? 'رقم البطاقة' : 'Card Number' }}</label>
+                  <input
+                    type="text"
+                    class="form-control font-mono"
+                    placeholder="4242 •••• •••• 4242"
+                    [(ngModel)]="cardDetails.number"
+                    name="cardNumber"
+                  />
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label>{{ isArabic() ? 'تاريخ الانتهاء' : 'Expiry Date' }}</label>
+                    <input
+                      type="text"
+                      class="form-control font-mono"
+                      placeholder="MM / YY"
+                      [(ngModel)]="cardDetails.expiry"
+                      name="cardExpiry"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>{{ isArabic() ? 'الرمز السري (CVV)' : 'CVV' }}</label>
+                    <input
+                      type="password"
+                      class="form-control font-mono"
+                      placeholder="•••"
+                      [(ngModel)]="cardDetails.cvv"
+                      name="cardCvv"
+                      maxlength="4"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Right: Order Summary Sidebar -->
+        <div class="checkout-summary-col">
+          <div class="summary-card">
+            <h3 class="summary-title">{{ isArabic() ? 'أصناف الطلب' : 'Order Items' }} ({{ cartService.itemCount() }})</h3>
+
+            <div class="summary-items-list">
+              @for (item of cartService.items(); track item._id || $index) {
+                <div class="checkout-item-mini">
+                  <img [src]="item.image" [alt]="item.name" class="mini-thumb" />
+                  <div class="mini-info">
+                    <div class="mini-name"><strong>{{ item.quantity }}x</strong> {{ item.name }}</div>
+                    <div class="mini-customs">
+                      @if (item.selectedSize?.name && item.selectedSize.name !== 'Regular') {
+                        <span>{{ isArabic() ? 'الحجم:' : 'Size:' }} {{ item.selectedSize.name }}</span>
+                      }
+                      @for (t of item.selectedToppings; track t.name) {
+                        <span>+ {{ t.name }}</span>
+                      }
+                      @for (f of item.selectedFlavors; track f.name) {
+                        <span>+ {{ f.name }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="mini-price">{{ item.itemTotal | egp }}</div>
+                </div>
+              }
+            </div>
+
+            <div class="breakdown-divider"></div>
+
+            <div class="breakdown-list">
+              <div class="breakdown-row">
+                <span>{{ 'cart.subtotal' | translate }}</span>
+                <span>{{ cartService.subtotal() | egp }}</span>
+              </div>
+
+              @if (cartService.discount() > 0) {
+                <div class="breakdown-row text-success">
+                  <span>{{ 'cart.discount' | translate }}</span>
+                  <span>-{{ cartService.discount() | egp }}</span>
+                </div>
+              }
+
+              <div class="breakdown-row">
+                <span>{{ 'cart.delivery' | translate }}</span>
+                <span>
+                  @if (cartService.deliveryFee() === 0) {
+                    <span class="free-text">{{ isArabic() ? 'مجاناً' : 'FREE' }}</span>
+                  } @else {
+                    {{ cartService.deliveryFee() | egp }}
+                  }
+                </span>
+              </div>
+
+              <div class="breakdown-divider"></div>
+
+              <div class="breakdown-row total-row">
+                <span>{{ 'cart.total' | translate }}</span>
+                <span class="total-price">{{ cartService.total() | egp }}</span>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-lg btn-tomato w-100 mt-4 submit-order-btn"
+              [disabled]="isPlacingOrder() || !isFormValid()"
+            >
+              @if (isPlacingOrder()) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>{{ isArabic() ? 'جارٍ تأكيد الطلب والبدء بالخبز...' : 'Baking & Confirming Order...' }}</span>
+              } @else {
+                <span>{{ 'checkout.placeOrder' | translate }} • {{ cartService.total() | egp }}</span>
+                <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+              }
+            </button>
+
+            <p class="terms-caption">
+              {{ isArabic() ? 'بمجرد تأكيد طلبك، سيبدأ طهاتنا على الفور بتحضير البيتزا والدوناتس في فرن الحطب.' : 'By clicking Place Order, your fresh food will immediately begin preparation in our artisan kitchen.' }}
+            </p>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</div>

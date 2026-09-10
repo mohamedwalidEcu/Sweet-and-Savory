@@ -1,0 +1,184 @@
+<div class="cart-page">
+  <div class="container-wide">
+    <!-- Header -->
+    <div class="page-header">
+      <span class="tag-script">{{ isArabic() ? 'مختاراتك الشهية' : 'Your Selection' }}</span>
+      <h1 class="display-section page-title">{{ 'cart.title' | translate }}</h1>
+    </div>
+
+    @if (cartService.items().length === 0) {
+      <!-- Empty Cart State -->
+      <div class="empty-cart-card">
+        <div class="empty-cart-icon">
+          <svg lucideShoppingBag class="lucide-icon-xl text-tomato"></svg>
+        </div>
+        <h2 class="empty-heading">{{ 'cart.empty' | translate }}</h2>
+        <p class="empty-text">{{ 'cart.emptyDesc' | translate }}</p>
+        <a routerLink="/menu" class="btn btn-lg btn-tomato mt-3">
+          <span>{{ 'cart.explore' | translate }}</span>
+          <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+        </a>
+      </div>
+    } @else {
+      <div class="cart-layout-grid">
+        <!-- Left: Cart Items List -->
+        <div class="cart-items-col">
+          <div class="cart-table-header">
+            <span>{{ 'orders.item' | translate }} ({{ cartService.itemCount() }})</span>
+            <span>{{ 'cart.subtotal' | translate }}</span>
+          </div>
+
+          <div class="cart-items-stack">
+            @for (item of cartService.items(); track item._id || $index) {
+              <div class="cart-item-row">
+                <img [src]="item.image" [alt]="item.name" class="item-thumb" />
+
+                <div class="item-info">
+                  <h3 class="item-title">{{ item.name }}</h3>
+
+                  <!-- Customizations Badges -->
+                  <div class="customization-chips">
+                    @if (item.selectedSize?.name && item.selectedSize.name !== 'Regular') {
+                      <span class="chip chip-size">{{ isArabic() ? 'الحجم:' : 'Size:' }} {{ item.selectedSize.name }}</span>
+                    }
+                    @for (t of item.selectedToppings; track t.name) {
+                      <span class="chip chip-topping">+ {{ t.name }}</span>
+                    }
+                    @for (f of item.selectedFlavors; track f.name) {
+                      <span class="chip chip-flavor">+ {{ f.name }}</span>
+                    }
+                    @if (item.specialInstructions) {
+                      <div class="item-notes"><svg lucideTag class="lucide-icon-xs"></svg> "{{ item.specialInstructions }}"</div>
+                    }
+                  </div>
+
+                  <div class="item-unit-price">{{ item.unitPrice | egp }} / {{ isArabic() ? 'للقطعة' : 'each' }}</div>
+                </div>
+
+                <!-- Quantity Controls -->
+                <div class="item-controls">
+                  <div class="qty-stepper-sm">
+                    <button class="step-btn-sm" (click)="cartService.updateQuantity(item._id!, item.quantity - 1)" aria-label="Decrease">
+                      <svg lucideMinus class="lucide-icon-xs"></svg>
+                    </button>
+                    <span class="qty-num">{{ item.quantity }}</span>
+                    <button class="step-btn-sm" (click)="cartService.updateQuantity(item._id!, item.quantity + 1)" aria-label="Increase">
+                      <svg lucidePlus class="lucide-icon-xs"></svg>
+                    </button>
+                  </div>
+
+                  <div class="item-total-col">
+                    <span class="item-sum">{{ item.itemTotal | egp }}</span>
+                    <button class="remove-item-btn" (click)="cartService.removeItem(item._id!)" aria-label="Remove item">
+                      <svg lucideTrash2 class="lucide-icon-sm"></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="cart-actions-row">
+            <a routerLink="/menu" class="btn btn-outline btn-sm">
+              <svg lucideArrowLeft class="lucide-icon-sm flip-rtl"></svg>
+              <span>{{ isArabic() ? 'متابعة الطلب' : 'Continue Ordering' }}</span>
+            </a>
+            <button class="btn btn-ghost btn-sm text-danger" (click)="cartService.clearCart()">
+              <svg lucideTrash2 class="lucide-icon-sm"></svg>
+              <span>{{ 'cart.clearCart' | translate }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Order Summary Card -->
+        <div class="summary-col">
+          <div class="summary-card">
+            <h3 class="summary-title">{{ 'cart.summary' | translate }}</h3>
+
+            <!-- Coupon Input Box -->
+            <div class="coupon-field">
+              <div class="coupon-input-wrap">
+                <input
+                  type="text"
+                  class="coupon-input"
+                  [placeholder]="'cart.couponPlaceholder' | translate"
+                  [(ngModel)]="couponCodeInput"
+                  [disabled]="!!cartService.appliedCoupon()"
+                />
+                @if (cartService.appliedCoupon()) {
+                  <button class="remove-coupon-btn" (click)="removeCoupon()">
+                    <svg lucideX class="lucide-icon-xs"></svg>
+                  </button>
+                } @else {
+                  <button
+                    class="btn-apply-coupon"
+                    (click)="applyCoupon()"
+                    [disabled]="isValidatingCoupon() || !couponCodeInput"
+                  >
+                    {{ isValidatingCoupon() ? '...' : ('cart.apply' | translate) }}
+                  </button>
+                }
+              </div>
+
+              @if (cartService.appliedCoupon()) {
+                <div class="coupon-success-tag">
+                  <svg lucideTag class="lucide-icon-xs"></svg>
+                  <span>{{ isArabic() ? 'تم تفعيل الكوبون' : 'Coupon' }} <strong>{{ cartService.appliedCoupon()?.code }}</strong> (-{{ cartService.appliedCoupon()?.discountAmount | egp }})</span>
+                </div>
+              }
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="breakdown-list">
+              <div class="breakdown-row">
+                <span class="b-label">{{ 'cart.subtotal' | translate }}</span>
+                <span class="b-val">{{ cartService.subtotal() | egp }}</span>
+              </div>
+
+              @if (cartService.discount() > 0) {
+                <div class="breakdown-row text-success">
+                  <span class="b-label">{{ 'cart.discount' | translate }}</span>
+                  <span class="b-val">-{{ cartService.discount() | egp }}</span>
+                </div>
+              }
+
+              <div class="breakdown-row">
+                <span class="b-label">{{ 'cart.delivery' | translate }}</span>
+                @if (cartService.deliveryFee() === 0) {
+                  <span class="b-val text-success">{{ 'cart.free' | translate }}</span>
+                } @else {
+                  <span class="b-val">{{ cartService.deliveryFee() | egp }}</span>
+                }
+              </div>
+
+              @if (cartService.deliveryFee() > 0) {
+                <div class="delivery-threshold-hint">
+                  {{ isArabic() ? 'أضف ' + (200 - cartService.subtotal() | egp) + ' إضافية للتوصيل المجاني!' : 'Add ' + (200 - cartService.subtotal() | egp) + ' more for FREE delivery!' }}
+                </div>
+              }
+
+              <div class="breakdown-divider"></div>
+
+              <div class="breakdown-row total-row">
+                <span class="b-label">{{ 'cart.total' | translate }}</span>
+                <span class="b-val total-price">{{ cartService.total() | egp }}</span>
+              </div>
+            </div>
+
+            <!-- Checkout CTA -->
+            <a routerLink="/checkout" class="btn btn-lg btn-tomato w-100 mt-4">
+              <span>{{ 'cart.checkout' | translate }}</span>
+              <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+            </a>
+
+            <!-- Safety Guarantee -->
+            <div class="trust-guarantee">
+              <svg lucideShieldCheck class="lucide-icon-xs text-green"></svg>
+              <span>{{ isArabic() ? 'دفع آمن 100% • طلبك يصل ساخناً وطازجاً' : '100% Safe • Delivered piping hot' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="orders-page">
+  <div class="container-wide">
+    <div class="page-header">
+      <span class="tag-script">{{ isArabic() ? 'سجل طلباتك الشهية' : 'Your Craving Records' }}</span>
+      <h1 class="display-section page-title">{{ 'orders.title' | translate }}</h1>
+    </div>
+
+    @if (isLoading()) {
+      <div class="orders-stack">
+        @for (i of [1, 2]; track i) {
+          <div class="skeleton-box" style="height: 140px; margin-bottom: 1.5rem; border-radius: var(--radius-md);"></div>
+        }
+      </div>
+    } @else if (orders().length === 0) {
+      <div class="empty-card">
+        <div class="empty-icon">🧾</div>
+        <h2>{{ 'orders.noOrders' | translate }}</h2>
+        <p class="text-secondary mt-2">{{ isArabic() ? 'عند قيامك بطلب أي وجبة، ستظهر فواتيرك وتتبع التوصيل المباشر هنا.' : 'When you place orders, your receipts and live delivery tracking will appear here.' }}</p>
+        <a routerLink="/menu" class="btn btn-tomato mt-3">{{ 'orders.browseMenu' | translate }}</a>
+      </div>
+    } @else {
+      <div class="orders-stack">
+        @for (order of orders(); track order._id) {
+          <div class="order-card">
+            <div class="order-card-header">
+              <div class="order-id-block">
+                <span class="order-number-badge">{{ order.orderNumber }}</span>
+                <span class="order-date">{{ order.createdAt | date:'medium' }}</span>
+              </div>
+
+              <div class="order-status-pill" [ngClass]="'status-' + order.orderStatus">
+                <span class="status-dot"></span>
+                <span>{{ getStatusLabel(order.orderStatus) }}</span>
+              </div>
+            </div>
+
+            <div class="order-card-body">
+              <div class="order-items-preview">
+                @for (item of order.items; track item.name) {
+                  <div class="item-chip">
+                    <img [src]="item.image" [alt]="item.name" class="chip-img" />
+                    <span>{{ item.quantity }}x {{ item.name }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="order-pricing-summary">
+                <div class="total-label">{{ 'orders.totalPaid' | translate }}</div>
+                <div class="total-value">{{ order.total | egp }}</div>
+              </div>
+            </div>
+
+            <div class="order-card-footer">
+              <div class="delivery-address-preview">
+                <svg lucideMapPin class="lucide-icon-xs"></svg>
+                <span>{{ order.shippingAddress.street }}, {{ order.shippingAddress.city }}</span>
+              </div>
+
+              <a [routerLink]="['/orders', order._id]" class="btn btn-sm btn-dark">
+                <span>{{ 'orders.viewDetails' | translate }}</span>
+                <svg lucideArrowRight class="lucide-icon-xs flip-rtl"></svg>
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

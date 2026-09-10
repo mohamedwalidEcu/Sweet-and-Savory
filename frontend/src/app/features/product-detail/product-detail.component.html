@@ -1,0 +1,377 @@
+@if (isLoading()) {
+  <div class="container-wide py-5 text-center">
+    <div class="skeleton-box" style="height: 480px; max-width: 900px; margin: 0 auto; border-radius: var(--radius-md);"></div>
+  </div>
+} @else if (!product()) {
+  <div class="container-wide py-5 text-center">
+    <h2>{{ 'menu.noProducts' | translate }}</h2>
+    <a routerLink="/menu" class="btn btn-tomato mt-3">{{ 'orders.browseMenu' | translate }}</a>
+  </div>
+} @else {
+  <div class="product-page">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav">
+      <div class="container-wide breadcrumb-inner">
+        <a routerLink="/">{{ 'nav.home' | translate }}</a>
+        <svg lucideChevronRight class="lucide-icon-xs breadcrumb-sep flip-rtl"></svg>
+        <a routerLink="/menu">{{ 'nav.menu' | translate }}</a>
+        <svg lucideChevronRight class="lucide-icon-xs breadcrumb-sep flip-rtl"></svg>
+        <a [routerLink]="['/menu']" [queryParams]="{ category: product()!.categorySlug }">
+          {{ getCategoryName() }}
+        </a>
+        <svg lucideChevronRight class="lucide-icon-xs breadcrumb-sep flip-rtl"></svg>
+        <span class="breadcrumb-current">{{ getProductName() }}</span>
+      </div>
+    </nav>
+
+    <div class="container-wide">
+      <!-- Main Product Layout Grid -->
+      <div class="product-layout-grid">
+        <!-- Left: Gallery -->
+        <div class="gallery-col">
+          <div class="main-image-frame">
+            <img
+              [src]="selectedImage() || product()!.images[0]"
+              [alt]="getProductName()"
+              class="main-img"
+            />
+            <!-- Wishlist Button (ONLY SHOWN WHEN LOGGED IN AND NOT ADMIN) -->
+            @if (authService.isLoggedIn() && !authService.isAdmin()) {
+              <button
+                class="fav-badge-btn"
+                [class.active]="wishlistService.isWishlisted(product()!._id)"
+                (click)="wishlistService.toggleWishlist(product()!)"
+                [attr.aria-label]="wishlistService.isWishlisted(product()!._id) ? 'Remove from favorites' : 'Save to favorites'"
+              >
+                <svg
+                  lucideHeart
+                  class="lucide-icon-md"
+                  [class.fill-current]="wishlistService.isWishlisted(product()!._id)"
+                  [class.text-pink]="wishlistService.isWishlisted(product()!._id)"
+                ></svg>
+              </button>
+            }
+          </div>
+
+          @if (product()!.images.length > 1) {
+            <div class="thumbnail-row">
+              @for (img of product()!.images; track img) {
+                <button
+                  class="thumb-btn"
+                  [class.active]="selectedImage() === img"
+                  (click)="selectedImage.set(img)"
+                >
+                  <img [src]="img" [alt]="product()!.name" class="thumb-img" />
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Ingredients Card -->
+          @if (product()!.ingredients?.length) {
+            <div class="ingredients-card">
+              <h4 class="card-subtitle"><i class="fa-solid fa-seedling"></i> {{ 'product.ingredients' | translate }}</h4>
+              <div class="ingredient-tags">
+                @for (ing of product()!.ingredients; track ing) {
+                  <span class="ing-tag">{{ ing }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Nutrition Info -->
+          @if (product()!.nutritionalInfo?.calories) {
+            <div class="nutrition-card">
+              <h4 class="card-subtitle"><i class="fa-solid fa-chart-simple"></i> {{ 'product.nutrition' | translate }}</h4>
+              <div class="nutrition-grid">
+                <div class="nut-item">
+                  <span class="nut-val">{{ product()!.nutritionalInfo?.calories }}</span>
+                  <span class="nut-lbl">{{ isArabic() ? 'سعرة حرارية' : 'Calories' }}</span>
+                </div>
+                @if (product()!.nutritionalInfo?.protein) {
+                  <div class="nut-item">
+                    <span class="nut-val">{{ product()!.nutritionalInfo?.protein }}</span>
+                    <span class="nut-lbl">{{ isArabic() ? 'بروتين' : 'Protein' }}</span>
+                  </div>
+                }
+                @if (product()!.nutritionalInfo?.carbs) {
+                  <div class="nut-item">
+                    <span class="nut-val">{{ product()!.nutritionalInfo?.carbs }}</span>
+                    <span class="nut-lbl">{{ isArabic() ? 'كربوهيدرات' : 'Carbs' }}</span>
+                  </div>
+                }
+                @if (product()!.nutritionalInfo?.fat) {
+                  <div class="nut-item">
+                    <span class="nut-val">{{ product()!.nutritionalInfo?.fat }}</span>
+                    <span class="nut-lbl">{{ isArabic() ? 'دهون' : 'Fat' }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Right: Product Information & Customization -->
+        <div class="details-col">
+          <div class="product-badge-row">
+            <span class="badge" [ngClass]="product()!.categorySlug === 'donuts' ? 'badge-pink' : 'badge-tomato'">
+              {{ getCategoryName() }}
+            </span>
+            @if (product()!.badgeText) {
+              <span class="badge badge-dark">{{ getBadgeText() }}</span>
+            }
+            <div class="stock-indicator" [class.in-stock]="product()!.stock > 0">
+              <i class="fa-solid fa-circle"></i>
+              <span>{{ product()!.stock > 0 ? ('product.inStock' | translate) : ('product.outOfStock' | translate) }}</span>
+            </div>
+          </div>
+
+          <h1 class="display-section product-name">{{ getProductName() }}</h1>
+
+          <!-- Ratings Row (Clickable to scroll to reviews) -->
+          <a href="#customer-reviews" (click)="scrollToReviews($event)" class="rating-review-row rating-link-btn" title="View customer reviews">
+            <app-star-rating [rating]="product()!.rating" [showNumber]="true"></app-star-rating>
+            <span class="review-count-text">({{ product()!.reviewCount }} {{ isArabic() ? 'تقييم من عملائنا' : 'customer reviews' }})</span>
+            <span class="prep-badge"><svg lucideClock class="lucide-icon-xs"></svg> {{ product()!.preparationTime || '15-20 min' }}</span>
+          </a>
+
+          <!-- Price Box -->
+          <div class="price-display-banner">
+            <div class="price-stack">
+              <span class="unit-price-calc">{{ calculatedUnitPrice() | egp }}</span>
+              @if (product()!.discountPrice && selectedSize().priceAdjustment === 0 && selectedToppings().length === 0 && selectedFlavors().length === 0) {
+                <span class="original-price-calc">{{ product()!.price | egp }}</span>
+              }
+            </div>
+            <div class="custom-hint">{{ isArabic() ? 'يتم احتساب السعر تلقائياً بناءً على الحجم والإضافات' : 'Customizations update price live' }}</div>
+          </div>
+
+          <p class="product-description-text">{{ getProductDescription() }}</p>
+
+          <!-- Customization Options -->
+          <div class="customization-section">
+            <!-- 1. Sizes Selection -->
+            @if (product()!.availableSizes?.length) {
+              <div class="option-group">
+                <label class="option-label">
+                  <span>{{ 'product.selectSize' | translate }}</span>
+                  <span class="req-tag">{{ isArabic() ? 'مطلوب' : 'Required' }}</span>
+                </label>
+                <div class="size-options-grid">
+                  @for (size of product()!.availableSizes; track size.name) {
+                    <button
+                      type="button"
+                      class="size-pill-btn"
+                      [class.active]="selectedSize().name === size.name"
+                      (click)="selectedSize.set(size)"
+                    >
+                      <span class="size-name">{{ size.name }}</span>
+                      @if (size.priceAdjustment > 0) {
+                        <span class="size-price">+ {{ size.priceAdjustment | egp }}</span>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- 2. Pizza Toppings -->
+            @if (product()!.availableToppings?.length) {
+              <div class="option-group">
+                <label class="option-label">
+                  <span>{{ 'product.selectToppings' | translate }}</span>
+                  <span class="opt-tag">{{ isArabic() ? 'اختياري' : 'Optional' }}</span>
+                </label>
+                <div class="checkbox-options-grid">
+                  @for (top of product()!.availableToppings; track top.name) {
+                    <label class="custom-check-card" [class.checked]="isToppingSelected(top.name)">
+                      <input
+                        type="checkbox"
+                        [checked]="isToppingSelected(top.name)"
+                        (change)="toggleTopping(top)"
+                      />
+                      <div class="check-content">
+                        <span class="check-title">{{ top.name }}</span>
+                        <span class="check-price">+ {{ top.price | egp }}</span>
+                      </div>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- 3. Donut Flavors & Glazes -->
+            @if (product()!.availableFlavors?.length) {
+              <div class="option-group">
+                <label class="option-label">
+                  <span>{{ 'product.selectFlavors' | translate }}</span>
+                  <span class="opt-tag">{{ isArabic() ? 'اختياري' : 'Optional' }}</span>
+                </label>
+                <div class="checkbox-options-grid">
+                  @for (flav of product()!.availableFlavors; track flav.name) {
+                    <label class="custom-check-card" [class.checked]="isFlavorSelected(flav.name)">
+                      <input
+                        type="checkbox"
+                        [checked]="isFlavorSelected(flav.name)"
+                        (change)="toggleFlavor(flav)"
+                      />
+                      <div class="check-content">
+                        <span class="check-title">{{ flav.name }}</span>
+                        <span class="check-price">+ {{ flav.price | egp }}</span>
+                      </div>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- 4. Special Kitchen Instructions -->
+            <div class="option-group">
+              <label class="option-label" for="notes">
+                <span>{{ 'product.specialInstructions' | translate }}</span>
+              </label>
+              <input
+                id="notes"
+                type="text"
+                class="form-control"
+                [placeholder]="'product.specialInstructionsPlaceholder' | translate"
+                [(ngModel)]="specialInstructions"
+              />
+            </div>
+          </div>
+
+          <!-- Quantity & Add to Cart Action Row -->
+          <div class="purchase-action-bar">
+            <div class="quantity-stepper">
+              <button class="step-btn" (click)="decreaseQty()" [disabled]="quantity() <= 1" aria-label="Decrease quantity">
+                <svg lucideMinus class="lucide-icon-sm"></svg>
+              </button>
+              <span class="qty-display">{{ quantity() }}</span>
+              <button class="step-btn" (click)="increaseQty()" [disabled]="quantity() >= product()!.stock" aria-label="Increase quantity">
+                <svg lucidePlus class="lucide-icon-sm"></svg>
+              </button>
+            </div>
+
+            <button
+              class="btn btn-lg btn-tomato flex-1"
+              (click)="onAddToCart()"
+              [disabled]="product()!.stock <= 0"
+            >
+              <svg lucideShoppingBag class="lucide-icon-sm"></svg>
+              <span>{{ 'product.addToBag' | translate }} • {{ calculatedTotalPrice() | egp }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Reviews Section -->
+      <div class="product-reviews-section" id="customer-reviews">
+        <div class="reviews-split-layout">
+          <!-- Reviews List -->
+          <div class="reviews-list-col">
+            <h3 class="section-heading">{{ 'product.customerReviews' | translate }} ({{ reviews().length }})</h3>
+
+            @if (reviews().length === 0) {
+              <p class="text-muted">{{ 'product.noReviewsYet' | translate }}</p>
+            } @else {
+              <div class="reviews-stack">
+                @for (review of reviews(); track review._id) {
+                  <div class="review-item">
+                    <div class="review-item-header">
+                      <div class="reviewer-avatar">
+                        @if (review.userAvatar) {
+                          <img [src]="review.userAvatar" alt="Avatar" class="avatar-circle" />
+                        } @else {
+                          <div class="avatar-circle avatar-fallback">{{ review.userName.charAt(0) }}</div>
+                        }
+                      </div>
+                      <div>
+                        <div class="reviewer-author">{{ review.userName }}</div>
+                        <div class="reviewer-meta-text">
+                          <span class="verified-tag"><svg lucideCheckCircle2 class="lucide-icon-xs"></svg> {{ isArabic() ? 'مشتري مؤكد' : 'Verified Purchase' }}</span>
+                          <span>• {{ review.createdAt | date:'mediumDate' }}</span>
+                        </div>
+                      </div>
+                      <div class="review-stars-end">
+                        <app-star-rating [rating]="review.rating" [showNumber]="false"></app-star-rating>
+                      </div>
+                    </div>
+                    <p class="review-body-text">{{ review.comment }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Write Review Box -->
+          <div class="write-review-col">
+            <div class="write-review-card">
+              <h3 class="card-title">{{ 'product.writeReview' | translate }}</h3>
+
+              @if (!authService.isLoggedIn()) {
+                <p class="auth-prompt">{{ isArabic() ? 'يرجى تسجيل الدخول أولاً لكتابة تقييمك.' : 'Please sign in to submit your rating & review.' }} <a routerLink="/login" class="link-highlight">{{ 'nav.login' | translate }}</a></p>
+              } @else if (authService.isAdmin()) {
+                <div class="admin-notice-card">
+                  <svg lucideAlertCircle class="lucide-icon-sm text-tomato"></svg>
+                  <span>{{ isArabic() ? 'حسابات إدارة النظام مخصصة لإدارة المتجر والطلبات فقط، ولا يمكنها كتابة مراجعات كعميل.' : 'Admin accounts are for store management only and cannot submit customer reviews.' }}</span>
+                </div>
+              } @else {
+                <form (ngSubmit)="onSubmitReview()" class="review-form">
+                  <div class="form-group">
+                    <div class="rating-label-row">
+                      <label><strong>{{ 'product.rating' | translate }}:</strong></label>
+                      <span class="selected-star-num">{{ hoverRating() || newReviewRating() }} / 5 {{ isArabic() ? 'نجوم' : 'Stars' }}</span>
+                    </div>
+
+                    <div class="star-picker-modern" (mouseleave)="hoverRating.set(0)">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <button
+                          type="button"
+                          class="star-pick-btn-modern"
+                          (mouseenter)="hoverRating.set(star)"
+                          (click)="setRating(star)"
+                          [class.active]="star <= (hoverRating() || newReviewRating())"
+                          [attr.aria-label]="'Rate ' + star + ' out of 5 stars'"
+                        >
+                          <i
+                            class="fa-star"
+                            [class.fa-solid]="star <= (hoverRating() || newReviewRating())"
+                            [class.fa-regular]="star > (hoverRating() || newReviewRating())"
+                          ></i>
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="reviewComment">
+                      {{ 'product.comment' | translate }}
+                      <small class="text-muted">({{ isArabic() ? 'اختياري' : 'Optional' }})</small>:
+                    </label>
+                    <textarea
+                      id="reviewComment"
+                      class="form-control"
+                      rows="3"
+                      [placeholder]="isArabic() ? 'شاركنا رأيك وتجربتك مع هذا الصنف...' : 'How did you enjoy the crust, flavors, and glaze?'"
+                      [(ngModel)]="newReviewComment"
+                      name="reviewComment"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    class="btn btn-tomato w-100"
+                    [disabled]="isSubmittingReview()"
+                  >
+                    <span>{{ isSubmittingReview() ? (isArabic() ? 'جاري الإرسال...' : 'Submitting...') : ('product.submitReview' | translate) }}</span>
+                    <svg lucideSend class="lucide-icon-sm flip-rtl"></svg>
+                  </button>
+                </form>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

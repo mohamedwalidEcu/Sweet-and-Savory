@@ -1,0 +1,96 @@
+<div class="admin-users-page">
+  <div class="dash-header">
+    <div>
+      <span class="dash-tag">Registered Foodies</span>
+      <h1 class="display-section dash-title">User Management</h1>
+    </div>
+  </div>
+
+  <!-- Search Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg lucideSearch class="lucide-icon-sm search-icon-pos"></svg>
+      <input
+        type="text"
+        class="admin-search-input"
+        placeholder="Search by name, email, phone..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="fetchUsers()"
+      />
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="skeleton-box" style="height: 350px; border-radius: var(--radius-md);"></div>
+  } @else {
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users(); track user._id) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar-circle">
+                    {{ user.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <strong>{{ user.name }}</strong>
+                    <small class="text-muted">{{ user.email }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="role-badge" [class.role-admin]="user.role === 'admin'">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>{{ user.phone || '—' }}</td>
+              <td>
+                <small>{{ user.address?.street ? (user.address?.street + ', ' + user.address?.city) : '—' }}</small>
+              </td>
+              <td>
+                <span class="status-pill" [class.is-active]="user.isActive !== false">
+                  {{ user.isActive !== false ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <small>{{ user.createdAt | date:'shortDate' }}</small>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button
+                    class="btn-toggle-role"
+                    (click)="toggleRole(user)"
+                    [title]="user.role === 'admin' ? 'Revoke Admin' : 'Make Admin'"
+                  >
+                    <i [class]="user.role === 'admin' ? 'fa-solid fa-user-shield text-gold' : 'fa-regular fa-user'"></i>
+                    <span>{{ user.role === 'admin' ? 'Demote' : 'Promote' }}</span>
+                  </button>
+
+                  <button
+                    class="btn-toggle-active"
+                    (click)="toggleActive(user)"
+                    [title]="user.isActive !== false ? 'Deactivate Account' : 'Activate Account'"
+                  >
+                    <i [class]="user.isActive !== false ? 'fa-solid fa-toggle-on text-green' : 'fa-solid fa-toggle-off text-muted'"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

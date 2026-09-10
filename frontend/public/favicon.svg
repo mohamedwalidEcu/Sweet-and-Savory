@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1410" />
+      <stop offset="50%" stop-color="#140D0A" />
+      <stop offset="100%" stop-color="#0B0705" />
+    </linearGradient>
+
+    <!-- Savory Tomato-Gold Gradient -->
+    <linearGradient id="savoryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5C38" />
+      <stop offset="50%" stop-color="#E54523" />
+      <stop offset="100%" stop-color="#C23012" />
+    </linearGradient>
+
+    <linearGradient id="crustGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F5B338" />
+      <stop offset="100%" stop-color="#E08E10" />
+    </linearGradient>
+
+    <!-- Sweet Pink Glaze Gradient -->
+    <linearGradient id="sweetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6EA7" />
+      <stop offset="50%" stop-color="#E84589" />
+      <stop offset="100%" stop-color="#C22769" />
+    </linearGradient>
+
+    <!-- Soft Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#E54523" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Emblem Base -->
+  <rect x="4" y="4" width="120" height="120" rx="34" fill="url(#bgGrad)" stroke="#3A241C" stroke-width="2.5" />
+
+  <!-- Subtle Rim Highlight -->
+  <rect x="6" y="6" width="116" height="116" rx="32" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+
+  <!-- Sweet & Savory Emblem Art -->
+  <g filter="url(#glow)">
+    <!-- Artisan Pizza Slice (Savory) -->
+    <!-- Crust Arc -->
+    <path d="M 32 36 Q 64 26 96 36" fill="none" stroke="url(#crustGrad)" stroke-width="8" stroke-linecap="round" />
+
+    <!-- Pizza Body -->
+    <path d="M 35 41 Q 64 34 93 41 L 64 96 Z" fill="url(#savoryGrad)" />
+
+    <!-- Melted Cheese / Donut Intertwined Ring (Sweet Pink Donut Glaze Accent) -->
+    <circle cx="64" cy="62" r="22" fill="none" stroke="url(#sweetGrad)" stroke-width="7" stroke-dasharray="88 40" stroke-dashoffset="12" stroke-linecap="round" />
+
+    <!-- Pizza Topping Dots (Basil & Pepperoni) -->
+    <circle cx="54" cy="54" r="4.5" fill="#FFE875" />
+    <circle cx="74" cy="56" r="4" fill="#8B1E0B" />
+    <circle cx="64" cy="74" r="3.5" fill="#FFE875" />
+
+    <!-- Donut Sprinkles -->
+    <rect x="61" y="45" width="6" height="2.5" rx="1.2" fill="#FFFFFF" transform="rotate(-25 64 46)" />
+    <rect x="76" y="68" width="6" height="2.5" rx="1.2" fill="#FDD835" transform="rotate(35 79 69)" />
+    <rect x="46" y="66" width="5.5" height="2.2" rx="1.1" fill="#69F0AE" transform="rotate(15 48 67)" />
+  </g>
+
+  <!-- Sparkle Star Accent -->
+  <path d="M 98 26 Q 98 33 105 33 Q 98 33 98 40 Q 98 33 91 33 Q 98 33 98 26 Z" fill="#F5B338" opacity="0.9" />
+</svg>

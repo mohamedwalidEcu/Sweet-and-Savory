@@ -1,0 +1,226 @@
+@if (isLoading()) {
+  <div class="container-wide py-5 text-center">
+    <div class="skeleton-box" style="height: 450px; max-width: 800px; margin: 0 auto; border-radius: var(--radius-md);"></div>
+  </div>
+} @else if (!order()) {
+  <div class="container-wide py-5 text-center">
+    <h2>{{ 'orders.noOrders' | translate }}</h2>
+    <a routerLink="/orders" class="btn btn-tomato mt-3">{{ 'orders.backToOrders' | translate }}</a>
+  </div>
+} @else {
+  <div class="order-detail-page">
+    <div class="container-wide">
+      <!-- Top Control Header (Non-printable) -->
+      <div class="tracking-top-bar no-print">
+        <a routerLink="/orders" class="btn btn-sm btn-outline">
+          <svg lucideArrowLeft class="lucide-icon-sm flip-rtl"></svg>
+          <span>{{ 'orders.backToOrders' | translate }}</span>
+        </a>
+
+        <div class="top-actions">
+          <span class="live-pill">
+            <span class="live-pulse"></span>
+            <span>{{ 'orders.liveTracking' | translate }}</span>
+          </span>
+
+          <button class="btn btn-sm btn-dark btn-print" (click)="printInvoice()">
+            <svg lucidePrinter class="lucide-icon-sm"></svg>
+            <span>{{ 'orders.printInvoice' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. LIVE ORDER TRACKER CARD (Non-printable) -->
+      <div class="tracker-card no-print">
+        <div class="tracker-header">
+          <div>
+            <span class="tracker-tag">{{ 'orders.orderTracking' | translate }}</span>
+            <h2 class="tracker-title">{{ 'orders.orderNum' | translate }} #{{ order()!.orderNumber }}</h2>
+            <div class="estimated-time">
+              <svg lucideClock class="lucide-icon-sm"></svg>
+              <span>{{ 'orders.estimated' | translate }} <strong>{{ order()!.estimatedDeliveryTime || '25-35 minutes' }}</strong></span>
+            </div>
+          </div>
+
+          <div class="status-badge-lg" [ngClass]="'status-' + order()!.orderStatus">
+            <span>{{ formatStatus(order()!.orderStatus) }}</span>
+          </div>
+        </div>
+
+        <!-- Stepper Progress Bar -->
+        <div class="stepper-track">
+          <div class="step-point" [class.completed]="isStepCompleted('pending')" [class.active]="order()!.orderStatus === 'pending'">
+            <div class="step-icon-circle">
+              <svg lucideReceipt class="lucide-icon-md"></svg>
+            </div>
+            <div class="step-label-box">
+              <strong class="step-title">{{ 'orders.stepPlaced' | translate }}</strong>
+              <small class="step-sub">{{ 'orders.stepPlacedSub' | translate }}</small>
+            </div>
+          </div>
+
+          <div class="stepper-line" [class.filled]="isLineFilled('preparing')"></div>
+
+          <div class="step-point" [class.completed]="isStepCompleted('preparing')" [class.active]="order()!.orderStatus === 'preparing'">
+            <div class="step-icon-circle">
+              <svg lucideFlame class="lucide-icon-md"></svg>
+            </div>
+            <div class="step-label-box">
+              <strong class="step-title">{{ 'orders.stepKitchen' | translate }}</strong>
+              <small class="step-sub">{{ 'orders.stepKitchenSub' | translate }}</small>
+            </div>
+          </div>
+
+          <div class="stepper-line" [class.filled]="isLineFilled('out_for_delivery')"></div>
+
+          <div class="step-point" [class.completed]="isStepCompleted('out_for_delivery')" [class.active]="order()!.orderStatus === 'out_for_delivery'">
+            <div class="step-icon-circle">
+              <svg lucideTruck class="lucide-icon-md"></svg>
+            </div>
+            <div class="step-label-box">
+              <strong class="step-title">{{ 'orders.stepDelivery' | translate }}</strong>
+              <small class="step-sub">{{ 'orders.stepDeliverySub' | translate }}</small>
+            </div>
+          </div>
+
+          <div class="stepper-line" [class.filled]="isLineFilled('delivered')"></div>
+
+          <div class="step-point" [class.completed]="isStepCompleted('delivered')" [class.active]="order()!.orderStatus === 'delivered'">
+            <div class="step-icon-circle">
+              <svg lucideCheckCircle2 class="lucide-icon-md"></svg>
+            </div>
+            <div class="step-label-box">
+              <strong class="step-title">{{ 'orders.stepDelivered' | translate }}</strong>
+              <small class="step-sub">{{ 'orders.stepDeliveredSub' | translate }}</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status History Log -->
+        @if (order()!.statusHistory?.length) {
+          <div class="status-history-drawer">
+            <h4 class="history-title"><svg lucideReceipt class="lucide-icon-xs"></svg> {{ 'orders.kitchenUpdates' | translate }}</h4>
+            <div class="history-timeline">
+              @for (h of order()!.statusHistory; track h.timestamp) {
+                <div class="timeline-row">
+                  <span class="timeline-dot"></span>
+                  <div class="timeline-content">
+                    <strong>{{ formatStatus(h.status) }}:</strong>
+                    <span>{{ h.note || 'Status updated.' }}</span>
+                    <small class="timeline-time">{{ h.timestamp | date:'shortTime' }}</small>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- 2. OFFICIAL PRINTABLE INVOICE (This element is printed on paper) -->
+      <div class="printable-invoice-card" id="printableInvoice">
+        <!-- Invoice Header -->
+        <div class="invoice-header">
+          <div class="invoice-brand">
+            <div class="brand-logo">
+              <span class="brand-sweet">Sweet</span>
+              <span class="brand-amp">&</span>
+              <span class="brand-savory">Savory</span>
+            </div>
+            <p class="brand-sub">Artisan Pizza & Handcrafted Donuts</p>
+            <p class="brand-loc">{{ isArabic() ? '١٤ شارع الأهرام، القاهرة، مصر • +20 100 123 4567' : '14 Al-Ahram Blvd, Cairo, Egypt • +20 100 123 4567' }}</p>
+          </div>
+
+          <div class="invoice-meta">
+            <div class="invoice-title-badge">{{ 'orders.taxInvoice' | translate }}</div>
+            <div class="meta-line"><strong>{{ 'orders.orderNo' | translate }}</strong> {{ order()!.orderNumber }}</div>
+            <div class="meta-line"><strong>{{ 'orders.date' | translate }}</strong> {{ order()!.createdAt | date:'medium' }}</div>
+            <div class="meta-line"><strong>{{ 'orders.payment' | translate }}</strong> {{ order()!.paymentInfo.method }} ({{ order()!.paymentInfo.status | uppercase }})</div>
+          </div>
+        </div>
+
+        <div class="invoice-divider"></div>
+
+        <!-- Customer & Delivery Info -->
+        <div class="customer-info-grid">
+          <div class="info-block">
+            <h4>{{ 'orders.customerDetails' | translate }}</h4>
+            <p><strong>{{ 'checkout.fullName' | translate }}:</strong> {{ order()!.shippingAddress.fullName }}</p>
+            <p><strong>{{ 'checkout.phone' | translate }}:</strong> {{ order()!.shippingAddress.phone }}</p>
+          </div>
+          <div class="info-block">
+            <h4>{{ 'orders.deliveryAddress' | translate }}</h4>
+            <p>{{ order()!.shippingAddress.street }}</p>
+            <p>{{ order()!.shippingAddress.city }}</p>
+            @if (order()!.shippingAddress.deliveryNotes) {
+              <p><em>{{ isArabic() ? 'ملاحظات:' : 'Notes:' }} {{ order()!.shippingAddress.deliveryNotes }}</em></p>
+            }
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="invoice-items-table">
+          <thead>
+            <tr>
+              <th>{{ 'orders.item' | translate }}</th>
+              <th class="text-center">{{ 'orders.qty' | translate }}</th>
+              <th class="text-right">{{ 'orders.unitPrice' | translate }}</th>
+              <th class="text-right">{{ 'orders.itemTotal' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order()!.items; track item.name) {
+              <tr>
+                <td>
+                  <div class="item-name-bold">{{ item.name }}</div>
+                  <div class="item-sub-specs">
+                    @if (item.selectedSize?.name && item.selectedSize.name !== 'Regular') {
+                      <span>{{ isArabic() ? 'الحجم:' : 'Size:' }} {{ item.selectedSize.name }}</span>
+                    }
+                    @for (t of item.selectedToppings; track t.name) {
+                      <span>+ {{ t.name }}</span>
+                    }
+                    @for (f of item.selectedFlavors; track f.name) {
+                      <span>+ {{ f.name }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="text-center">{{ item.quantity }}</td>
+                <td class="text-right">{{ item.unitPrice | egp }}</td>
+                <td class="text-right font-bold">{{ item.itemTotal | egp }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Invoice Totals -->
+        <div class="invoice-totals-row">
+          <div class="thank-you-note">
+            <p class="chef-signature">{{ 'orders.chefSignature' | translate }}</p>
+            <small>{{ 'orders.chefDesc' | translate }}</small>
+          </div>
+
+          <div class="totals-table">
+            <div class="t-row">
+              <span>{{ 'orders.subtotal' | translate }}</span>
+              <span>{{ order()!.subtotal | egp }}</span>
+            </div>
+            @if (order()!.discount > 0) {
+              <div class="t-row text-success">
+                <span>{{ 'orders.couponDiscount' | translate }}</span>
+                <span>-{{ order()!.discount | egp }}</span>
+              </div>
+            }
+            <div class="t-row">
+              <span>{{ 'orders.deliveryFee' | translate }}</span>
+              <span>{{ order()!.deliveryFee | egp }}</span>
+            </div>
+            <div class="t-row grand-total-row">
+              <span>{{ 'orders.totalPaid' | translate }}</span>
+              <span>{{ order()!.total | egp }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

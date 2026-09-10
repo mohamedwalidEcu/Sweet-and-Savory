@@ -1,0 +1,18 @@
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--color-gold);
+}
+
+.star-icon {
+  font-size: 0.85rem;
+}
+
+.rating-number {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-inline-start: 0.25rem;
+}

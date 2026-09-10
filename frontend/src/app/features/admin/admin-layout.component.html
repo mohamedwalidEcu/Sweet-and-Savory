@@ -1,0 +1,93 @@
+<div class="admin-shell">
+  <!-- Mobile backdrop -->
+  <div class="sidebar-backdrop" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+  <!-- Mobile top bar -->
+  <div class="admin-mobile-topbar">
+    <button class="admin-menu-toggle" (click)="toggleSidebar()" aria-label="Open menu">
+      @if (sidebarOpen()) {
+        <svg lucideX class="lucide-icon-md"></svg>
+      } @else {
+        <svg lucideMenu class="lucide-icon-md"></svg>
+      }
+    </button>
+    <a routerLink="/" class="admin-brand" style="font-size:1.15rem;">
+      <span class="brand-sweet">Sweet</span>
+      <span class="brand-amp">&</span>
+      <span class="brand-savory">Savory</span>
+      <span class="admin-label">ADMIN</span>
+    </a>
+    <button class="admin-menu-toggle" (click)="themeService.toggleTheme()" aria-label="Toggle theme">
+      @if (themeService.isDark()) {
+        <svg lucideSun class="lucide-icon-md"></svg>
+      } @else {
+        <svg lucideMoon class="lucide-icon-md"></svg>
+      }
+    </button>
+  </div>
+
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-header">
+      <a routerLink="/" class="admin-brand">
+        <span class="brand-sweet">Sweet</span>
+        <span class="brand-amp">&</span>
+        <span class="brand-savory">Savory</span>
+        <span class="admin-label">ADMIN</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="side-link" (click)="closeSidebar()">
+        <svg lucideLayoutDashboard class="lucide-icon-sm"></svg>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active" class="side-link" (click)="closeSidebar()">
+        <svg lucideReceipt class="lucide-icon-sm"></svg>
+        <span>Live Orders</span>
+      </a>
+      <a routerLink="/admin/products" routerLinkActive="active" class="side-link" (click)="closeSidebar()">
+        <svg lucidePizza class="lucide-icon-sm"></svg>
+        <span>Products</span>
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="active" class="side-link" (click)="closeSidebar()">
+        <svg lucideUsers class="lucide-icon-sm"></svg>
+        <span>Users</span>
+      </a>
+      <a routerLink="/admin/coupons" routerLinkActive="active" class="side-link" (click)="closeSidebar()">
+        <svg lucideTicket class="lucide-icon-sm"></svg>
+        <span>Coupons</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-profile-pill">
+        <div class="avatar-chip">{{ authService.currentUser()?.name?.charAt(0) }}</div>
+        <div class="admin-info-text">
+          <strong>{{ authService.currentUser()?.name }}</strong>
+          <small>System Admin</small>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <a routerLink="/" class="btn-side-action" (click)="closeSidebar()">
+          <svg lucideStore class="lucide-icon-xs"></svg>
+          <span>View Storefront</span>
+        </a>
+        <button class="btn-side-action" (click)="themeService.toggleTheme()">
+          @if (themeService.isDark()) {
+            <svg lucideSun class="lucide-icon-xs"></svg>
+          } @else {
+            <svg lucideMoon class="lucide-icon-xs"></svg>
+          }
+          <span>{{ themeService.isDark() ? 'Light Mode' : 'Dark Mode' }}</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content Area -->
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

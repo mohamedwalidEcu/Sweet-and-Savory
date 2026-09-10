@@ -1,0 +1,118 @@
+<div class="admin-orders-page">
+  <div class="dash-header">
+    <div>
+      <span class="dash-tag">Kitchen Real-Time Dispatch</span>
+      <h1 class="display-section dash-title">Order Management</h1>
+    </div>
+  </div>
+
+  <!-- Filters & Search Toolbar -->
+  <div class="admin-toolbar">
+    <div class="search-box">
+      <svg lucideSearch class="lucide-icon-sm search-icon-pos"></svg>
+      <input
+        type="text"
+        class="admin-search-input"
+        placeholder="Search order number, customer name, phone..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="fetchOrders()"
+      />
+    </div>
+
+    <div class="status-filters">
+      <button class="status-btn" [class.active]="selectedStatus === 'all'" (click)="setStatus('all')">All</button>
+      <button class="status-btn" [class.active]="selectedStatus === 'pending'" (click)="setStatus('pending')">Pending</button>
+      <button class="status-btn" [class.active]="selectedStatus === 'preparing'" (click)="setStatus('preparing')">Preparing</button>
+      <button class="status-btn" [class.active]="selectedStatus === 'out_for_delivery'" (click)="setStatus('out_for_delivery')">Out for Delivery</button>
+      <button class="status-btn" [class.active]="selectedStatus === 'delivered'" (click)="setStatus('delivered')">Delivered</button>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  @if (isLoading()) {
+    <div class="skeleton-box" style="height: 350px; border-radius: var(--radius-md);"></div>
+  } @else if (orders().length === 0) {
+    <div class="empty-box">
+      <p>No orders found matching this filter.</p>
+    </div>
+  } @else {
+    <div class="admin-table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order No</th>
+            <th>Date</th>
+            <th>Customer & Address</th>
+            <th>Items Ordered</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Live Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order._id) {
+            <tr>
+              <td>
+                <span class="order-num-font">{{ order.orderNumber }}</span>
+              </td>
+              <td>
+                <div class="date-stacked">
+                  <span>{{ order.createdAt | date:'shortDate' }}</span>
+                  <small>{{ order.createdAt | date:'shortTime' }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="cust-stacked">
+                  <strong>{{ order.shippingAddress.fullName }}</strong>
+                  <small>{{ order.shippingAddress.phone }}</small>
+                  <small class="address-line">{{ order.shippingAddress.street }}, {{ order.shippingAddress.city }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="items-mini-list">
+                  @for (item of order.items; track item.name) {
+                    <div class="item-line">
+                      <span><strong>{{ item.quantity }}x</strong> {{ item.name }}</span>
+                      @if (item.selectedSize?.name && item.selectedSize.name !== 'Regular') {
+                        <small class="size-hint">({{ item.selectedSize.name }})</small>
+                      }
+                    </div>
+                  }
+                </div>
+              </td>
+              <td>
+                <strong class="price-val">{{ order.total | egp }}</strong>
+              </td>
+              <td>
+                <span class="pay-tag" [class.pay-paid]="order.paymentInfo.status === 'completed'">
+                  {{ order.paymentInfo.status }}
+                </span>
+              </td>
+              <td>
+                <!-- Status Updater Dropdown -->
+                <select
+                  class="status-select"
+                  [ngClass]="'status-select-' + order.orderStatus"
+                  [ngModel]="order.orderStatus"
+                  (ngModelChange)="onUpdateStatus(order._id, $event)"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="preparing">Preparing (Oven)</option>
+                  <option value="out_for_delivery">Out for Delivery</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </td>
+              <td>
+                <a [routerLink]="['/orders', order._id]" class="btn-icon-table" title="View Full Invoice & Tracker">
+                  <svg lucideExternalLink class="lucide-icon-sm"></svg>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

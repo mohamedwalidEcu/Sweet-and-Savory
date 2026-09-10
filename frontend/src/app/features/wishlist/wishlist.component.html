@@ -1,0 +1,28 @@
+<div class="wishlist-page">
+  <div class="container-wide">
+    <div class="page-header">
+      <span class="tag-script">{{ isArabic() ? 'الأطباق المفضلة' : 'Saved Cravings' }}</span>
+      <h1 class="display-section page-title">{{ 'nav.wishlist' | translate }} ({{ wishlistService.count() }})</h1>
+    </div>
+
+    @if (wishlistService.products().length === 0) {
+      <div class="empty-wishlist-card">
+        <div class="empty-icon">
+          <svg lucideHeart class="lucide-icon-xl text-pink"></svg>
+        </div>
+        <h2 class="empty-title">{{ isArabic() ? 'قائمة المفضلة لديك فارغة' : 'Your favorites list is empty' }}</h2>
+        <p class="empty-desc">{{ isArabic() ? 'اضغط على القلب في أي بيتزا أو دونات لحفظها لطلبك القادم!' : 'Tap the heart on any pizza, donut, or combo to save it for your next craving feast!' }}</p>
+        <a routerLink="/menu" class="btn btn-lg btn-tomato mt-3">
+          <span>{{ isArabic() ? 'استكشف قائمة الطعام' : 'Explore the Menu' }}</span>
+          <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+        </a>
+      </div>
+    } @else {
+      <div class="wishlist-grid">
+        @for (product of wishlistService.products(); track product._id) {
+          <app-product-card [product]="product"></app-product-card>
+        }
+      </div>
+    }
+  </div>
+</div>

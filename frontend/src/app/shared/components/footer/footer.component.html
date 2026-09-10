@@ -1,0 +1,65 @@
+<footer class="site-footer">
+  <div class="container-wide footer-top">
+    <div class="footer-grid">
+      <!-- Col 1: Brand & Identity -->
+      <div class="footer-brand-col">
+        <div class="brand-logo">
+          <span class="brand-sweet">Sweet</span>
+          <span class="brand-amp">&</span>
+          <span class="brand-savory">Savory</span>
+        </div>
+        <p class="brand-bio">{{ 'footer.desc' | translate }}</p>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="TikTok" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" aria-label="Facebook" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ 'footer.quickLinks' | translate }}</h4>
+        <ul class="footer-list">
+          <li><a routerLink="/menu">{{ 'nav.menu' | translate }}</a></li>
+          <li><a routerLink="/menu" [queryParams]="{ category: 'pizza' }"><svg lucidePizza class="lucide-icon-xs text-tomato"></svg> {{ 'nav.pizza' | translate }}</a></li>
+          <li><a routerLink="/menu" [queryParams]="{ category: 'donuts' }"><svg lucideDonut class="lucide-icon-xs text-pink"></svg> {{ 'nav.donuts' | translate }}</a></li>
+          <li><a routerLink="/menu" [queryParams]="{ category: 'combos' }"><svg lucideFlame class="lucide-icon-xs text-gold"></svg> {{ 'nav.combos' | translate }}</a></li>
+          <li><a routerLink="/offers"><svg lucideTag class="lucide-icon-xs"></svg> {{ 'nav.offers' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Kitchen Hours -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ 'footer.hours' | translate }}</h4>
+        <p class="hours-text">{{ 'footer.hoursText' | translate }}</p>
+        <div class="delivery-badge">
+          <svg lucideZap class="lucide-icon-xs text-tomato"></svg>
+          <span>Average delivery: 25-35 mins</span>
+        </div>
+      </div>
+
+      <!-- Col 4: Contact & Location -->
+      <div class="footer-col">
+        <h4 class="footer-heading">{{ 'footer.contact' | translate }}</h4>
+        <ul class="footer-list contact-list">
+          <li><svg lucideMapPin class="lucide-icon-xs text-tomato"></svg> 14 Al-Ahram Blvd, Cairo, Egypt</li>
+          <li><svg lucidePhone class="lucide-icon-xs text-tomato"></svg> +20 100 123 4567</li>
+          <li><svg lucideMail class="lucide-icon-xs text-tomato"></svg> hello&#64;sweetandsavory.com</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Bottom -->
+  <div class="footer-bottom">
+    <div class="container-wide footer-bottom-inner">
+      <p class="copy-text">© 2026 Sweet & Savory Inc. {{ 'footer.rights' | translate }}</p>
+      <div class="payment-badges">
+        <span>Payment Simulation Active (Stripe Ready)</span>
+        <i class="fa-brands fa-cc-visa"></i>
+        <i class="fa-brands fa-cc-mastercard"></i>
+        <i class="fa-brands fa-cc-apple-pay"></i>
+      </div>
+    </div>
+  </div>
+</footer>

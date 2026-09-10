@@ -1,0 +1,96 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <a routerLink="/" class="brand-logo">
+        <span class="brand-sweet">Sweet</span>
+        <span class="brand-amp">&</span>
+        <span class="brand-savory">Savory</span>
+      </a>
+      <h2 class="auth-title">{{ 'auth.registerTitle' | translate }}</h2>
+      <p class="auth-subtitle">{{ 'auth.registerSubtitle' | translate }}</p>
+    </div>
+
+    <form (ngSubmit)="onRegister()" class="auth-form">
+      <div class="form-group">
+        <label for="name">{{ 'auth.fullName' | translate }} *</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          placeholder="e.g. Sarah Mitchell"
+          [(ngModel)]="name"
+          name="name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">{{ 'auth.email' | translate }} *</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          placeholder="you@example.com"
+          [(ngModel)]="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">{{ 'auth.password' | translate }} *</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••"
+          [(ngModel)]="password"
+          name="password"
+          required
+          minlength="6"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">{{ 'auth.phone' | translate }}</label>
+        <input
+          id="phone"
+          type="tel"
+          class="form-control"
+          [class.is-invalid]="phone.trim() && !isPhoneValid()"
+          placeholder="+20 100 123 4567"
+          [(ngModel)]="phone"
+          (blur)="phoneTouched.set(true)"
+          name="phone"
+        />
+        @if (phone.trim() && !isPhoneValid()) {
+          <span class="form-feedback-error">
+            {{ 'auth.phoneInvalid' | translate }}
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="street">{{ 'checkout.street' | translate }}</label>
+        <input
+          id="street"
+          type="text"
+          class="form-control"
+          placeholder="e.g. 14 Al-Ahram Blvd, Apt 4B"
+          [(ngModel)]="street"
+          name="street"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-lg btn-tomato w-100 mt-3" [disabled]="isLoading() || !name || !email || !password">
+        <span>{{ isLoading() ? ('auth.signingUp' | translate) : ('auth.signUp' | translate) }}</span>
+        <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span>{{ 'auth.alreadyAccount' | translate }}</span>
+      <a routerLink="/login" class="link-bold">{{ 'auth.signIn' | translate }}</a>
+    </div>
+  </div>
+</div>

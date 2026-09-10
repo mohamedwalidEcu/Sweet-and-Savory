@@ -1,0 +1,154 @@
+.admin-coupons-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dash-tag {
+  font-family: var(--font-accent);
+  font-size: 1.4rem;
+  color: var(--color-tomato);
+}
+
+.admin-table-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  border-bottom: 1.5px solid var(--border-subtle);
+  text-align: left;
+}
+
+.admin-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.88rem;
+}
+
+.coupon-code-mono {
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-tomato);
+}
+
+.type-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--bg-secondary);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-xs);
+}
+
+.status-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.status-pill.is-active {
+  color: var(--color-green);
+}
+
+.btn-action-del {
+  background: none;
+  color: var(--color-tomato);
+  font-size: 0.95rem;
+}
+
+.btn-action-del:hover {
+  opacity: 0.7;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-dialog {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+}
+
+.modal-close-btn {
+  background: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.modal-form {
+  padding: 1.5rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+@media (max-width: 480px) {
+  .modal-backdrop {
+    padding: 0.75rem;
+  }
+  .modal-dialog {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .modal-header,
+  .modal-form {
+    padding: 1.2rem;
+  }
+}
+

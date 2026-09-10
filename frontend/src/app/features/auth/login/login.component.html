@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <a routerLink="/" class="brand-logo">
+        <span class="brand-sweet">Sweet</span>
+        <span class="brand-amp">&</span>
+        <span class="brand-savory">Savory</span>
+      </a>
+      <h2 class="auth-title">{{ 'auth.loginTitle' | translate }}</h2>
+      <p class="auth-subtitle">{{ 'auth.loginSubtitle' | translate }}</p>
+    </div>
+
+    <form (ngSubmit)="onLogin()" class="auth-form">
+      <div class="form-group">
+        <label for="email">{{ 'auth.email' | translate }}</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          placeholder="you@example.com"
+          [(ngModel)]="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <div class="label-row">
+          <label for="password">{{ 'auth.password' | translate }}</label>
+        </div>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn btn-lg btn-tomato w-100 mt-3" [disabled]="isLoading() || !email || !password">
+        <span>{{ isLoading() ? ('auth.signingIn' | translate) : ('auth.signIn' | translate) }}</span>
+        <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <span>{{ 'auth.noAccount' | translate }}</span>
+      <a routerLink="/register" class="link-bold">{{ 'auth.createAccount' | translate }}</a>
+    </div>
+  </div>
+</div>

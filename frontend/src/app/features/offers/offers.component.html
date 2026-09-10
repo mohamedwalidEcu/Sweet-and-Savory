@@ -1,0 +1,54 @@
+<div class="offers-page">
+  <div class="container-wide">
+    <div class="page-header text-center">
+      <span class="tag-script">Save On Every Craving</span>
+      <h1 class="display-section page-title">{{ 'offers.title' | translate }}</h1>
+      <p class="lead-text subtitle">{{ 'offers.subtitle' | translate }}</p>
+    </div>
+
+    <div class="coupons-grid">
+      @for (coupon of coupons(); track coupon.code) {
+        <div class="promo-card" [class.is-percent]="coupon.type === 'percentage'">
+          <div class="promo-badge">
+            @if (coupon.type === 'percentage') {
+              <span>{{ coupon.value }}% {{ isArabic() ? 'خصم' : 'OFF' }}</span>
+            } @else {
+              <span>{{ coupon.value | egp }} {{ isArabic() ? 'خصم مباشر' : 'FLAT OFF' }}</span>
+            }
+          </div>
+
+          <div class="promo-body">
+            <h3 class="promo-code-text">{{ coupon.code }}</h3>
+            <p class="promo-desc">{{ coupon.description || (isArabic() ? 'كوبون خصم مميز على مشترياتك' : 'Special promo coupon discount') }}</p>
+            @if (coupon.minOrder) {
+              <span class="min-order-tag">{{ isArabic() ? 'الحد الأدنى للطلب: ' : 'Min order: ' }}{{ coupon.minOrder | egp }}</span>
+            }
+          </div>
+
+          <div class="promo-footer">
+            <button class="btn btn-tomato w-100" (click)="copyCode(coupon.code)">
+              <svg lucideCopy class="lucide-icon-sm"></svg>
+              <span>{{ 'offers.copyCode' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Combo Spotlight Banner -->
+    <div class="combo-deal-card">
+      <div class="cdc-content">
+        <span class="cdc-tag">
+          <svg lucideFlame class="lucide-icon-sm text-gold" style="display: inline-block; vertical-align: middle;"></svg>
+          <span>{{ isArabic() ? 'عرض خاص' : 'Craving Special' }}</span>
+        </span>
+        <h2 class="cdc-title">{{ isArabic() ? 'اشتري ٢ دونات، واحصل على مشروب مجاناً' : 'Buy Any 2 Artisan Donuts, Get 1 Free Soda' }}</h2>
+        <p class="cdc-desc">{{ isArabic() ? 'استمتع بأشهى الدونات الطازجة بنكهات الشوكولاتة والفراولة مع المشروبات الغازية المنعشة.' : 'Pair freshly glazed Valrhona chocolate or mountain strawberry donuts with blood orange sparkling soda or nitro cold brew.' }}</p>
+        <a routerLink="/menu" [queryParams]="{ category: 'donuts' }" class="btn btn-lg btn-dark">{{ isArabic() ? 'اطلب دونات الآن' : 'Order Donuts Now' }}</a>
+      </div>
+      <div class="cdc-image">
+        <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80" alt="Donuts Offer" class="cdc-img" />
+      </div>
+    </div>
+  </div>
+</div>

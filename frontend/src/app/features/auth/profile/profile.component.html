@@ -1,0 +1,128 @@
+<div class="profile-page">
+  <div class="container-wide">
+    <div class="page-header">
+      <span class="tag-script">Account Settings</span>
+      <h1 class="display-section page-title">My Profile</h1>
+    </div>
+
+    <div class="profile-layout-grid">
+      <!-- Left: Profile Summary Card -->
+      <div class="profile-summary-col">
+        <div class="summary-card">
+          <div class="avatar-large-wrap">
+            @if (authService.currentUser()?.avatar) {
+              <img [src]="authService.currentUser()?.avatar" alt="Avatar" class="avatar-lg" />
+            } @else {
+              <div class="avatar-lg avatar-placeholder">{{ authService.currentUser()?.name?.charAt(0) || 'U' }}</div>
+            }
+            @if (authService.isAdmin()) {
+              <span class="admin-pill">Admin</span>
+            }
+          </div>
+
+          <h3 class="user-fullname">{{ authService.currentUser()?.name }}</h3>
+          <p class="user-email-text">{{ authService.currentUser()?.email }}</p>
+
+          <div class="summary-links">
+            @if (!authService.isAdmin()) {
+              <a routerLink="/orders" class="profile-link-btn">
+                <i class="fa-solid fa-receipt"></i>
+                <span>View Order History</span>
+                <i class="fa-solid fa-chevron-right arrow-icon flip-rtl"></i>
+              </a>
+            }
+            @if (!authService.isAdmin()) {
+              <a routerLink="/wishlist" class="profile-link-btn">
+                <i class="fa-solid fa-heart"></i>
+                <span>My Saved Favorites</span>
+                <i class="fa-solid fa-chevron-right arrow-icon flip-rtl"></i>
+              </a>
+            }
+            @if (authService.isAdmin()) {
+              <a routerLink="/admin" class="profile-link-btn text-tomato">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Admin Dashboard</span>
+                <i class="fa-solid fa-chevron-right arrow-icon flip-rtl"></i>
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Edit Details & Password -->
+      <div class="profile-form-col">
+        <!-- 1. Contact & Address Details -->
+        <div class="settings-card">
+          <h3 class="card-heading"><i class="fa-solid fa-user-pen"></i> Personal Information</h3>
+          <form (ngSubmit)="onUpdateProfile()">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input id="name" type="text" class="form-control" [(ngModel)]="name" name="name" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" class="form-control" [(ngModel)]="email" name="email" required />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  class="form-control"
+                  [class.is-invalid]="phone.trim() && !isPhoneValid()"
+                  [(ngModel)]="phone"
+                  (blur)="phoneTouched.set(true)"
+                  name="phone"
+                  placeholder="+20 100 123 4567"
+                />
+                @if (phone.trim() && !isPhoneValid()) {
+                  <span class="form-feedback-error">
+                    {{ isArabic() ? 'يرجى إدخال رقم هاتف مصري صحيح (010, 011, 012, 015)' : 'Please enter a valid Egyptian phone number (010, 011, 012, 015)' }}
+                  </span>
+                }
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input id="city" type="text" class="form-control" [(ngModel)]="city" name="city" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="street">Street Address</label>
+              <input id="street" type="text" class="form-control" [(ngModel)]="street" name="street" />
+            </div>
+
+            <button type="submit" class="btn btn-tomato mt-2" [disabled]="isSavingProfile()">
+              <span>{{ isSavingProfile() ? 'Saving Changes...' : 'Save Profile' }}</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- 2. Change Password -->
+        <div class="settings-card">
+          <h3 class="card-heading"><i class="fa-solid fa-lock"></i> Security & Password</h3>
+          <form (ngSubmit)="onChangePassword()">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="currPass">Current Password</label>
+                <input id="currPass" type="password" class="form-control" [(ngModel)]="currentPassword" name="currPass" />
+              </div>
+              <div class="form-group">
+                <label for="newPass">New Password</label>
+                <input id="newPass" type="password" class="form-control" [(ngModel)]="newPassword" name="newPass" minlength="6" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-outline mt-2" [disabled]="isChangingPass() || !currentPassword || !newPassword">
+              <span>{{ isChangingPass() ? 'Updating...' : 'Change Password' }}</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

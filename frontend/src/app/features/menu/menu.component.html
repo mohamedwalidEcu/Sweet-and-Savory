@@ -1,0 +1,156 @@
+<div class="menu-page">
+  <!-- Header Banner -->
+  <section class="menu-header">
+    <div class="container-wide">
+      <span class="tag-script">{{ isArabic() ? 'طازجة من الفرن ومحطة التزيين' : 'Baked Fresh & Stone-Fired' }}</span>
+      <h1 class="display-section menu-title">{{ 'nav.menu' | translate }}</h1>
+      <p class="lead-text menu-subtitle">
+        {{ isArabic() ? 'استمتع بالبيتزا النابولية الإيطالية، ودوناتس البريوش الفاخرة، والكومبو الموفر والمشروبات المثلجة.' : 'Explore handcrafted pizzas, melt-in-your-mouth artisan donuts, crave combos, and chilled drinks.' }}
+      </p>
+
+      <!-- Search & Category Bar -->
+      <div class="menu-controls-card">
+        <div class="search-input-wrapper">
+          <svg lucideSearch class="search-icon lucide-icon-sm"></svg>
+          <input
+            type="text"
+            class="search-input"
+            [placeholder]="'menu.searchPlaceholder' | translate"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="applyFilters()"
+          />
+          @if (searchQuery) {
+            <button class="clear-search-btn" (click)="searchQuery = ''; applyFilters()">
+              <svg lucideX class="lucide-icon-sm"></svg>
+            </button>
+          }
+        </div>
+
+        <div class="category-tabs">
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'all'"
+            (click)="setCategory('all')"
+          >
+            <svg lucideLayoutGrid class="lucide-icon-xs"></svg>
+            <span>{{ 'menu.all' | translate }}</span>
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'pizza'"
+            (click)="setCategory('pizza')"
+          >
+            <svg lucidePizza class="lucide-icon-xs text-tomato"></svg>
+            <span>{{ 'nav.pizza' | translate }}</span>
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'donuts'"
+            (click)="setCategory('donuts')"
+          >
+            <svg lucideDonut class="lucide-icon-xs text-pink"></svg>
+            <span>{{ 'nav.donuts' | translate }}</span>
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'combos'"
+            (click)="setCategory('combos')"
+          >
+            <svg lucideFlame class="lucide-icon-xs text-gold"></svg>
+            <span>{{ 'nav.combos' | translate }}</span>
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'drinks'"
+            (click)="setCategory('drinks')"
+          >
+            <svg lucideCupSoda class="lucide-icon-xs"></svg>
+            <span>{{ isArabic() ? 'المشروبات' : 'Drinks' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Menu Section -->
+  <section class="menu-main-content">
+    <div class="container-wide">
+      <!-- Secondary Bar: Results count & Sort by -->
+      <div class="menu-toolbar">
+        <div class="results-count">
+          <span>{{ isArabic() ? 'متوفر لدينا' : 'Showing' }} <strong>{{ totalItems() }}</strong> {{ isArabic() ? 'طبق ووجبة شهية' : 'delicious choices' }}</span>
+        </div>
+
+        <div class="sort-wrapper">
+          <label for="sortBy" class="sort-label">{{ 'menu.sortBy' | translate }}:</label>
+          <select id="sortBy" class="sort-select" [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="newest">{{ 'menu.sortNewest' | translate }}</option>
+            <option value="price_asc">{{ 'menu.sortPriceAsc' | translate }}</option>
+            <option value="price_desc">{{ 'menu.sortPriceDesc' | translate }}</option>
+            <option value="rating">{{ 'menu.sortRating' | translate }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      @if (isLoading()) {
+        <div class="products-grid">
+          @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+            <div class="skeleton-card">
+              <div class="skeleton-box" style="height: 220px;"></div>
+              <div class="skeleton-body" style="padding: 1.25rem;">
+                <div class="skeleton-box" style="height: 22px; width: 65%; margin-bottom: 0.6rem;"></div>
+                <div class="skeleton-box" style="height: 14px; width: 90%; margin-bottom: 0.5rem;"></div>
+                <div class="skeleton-box" style="height: 38px; width: 45%; margin-top: 1rem;"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (products().length === 0) {
+        <div class="empty-state-box">
+          <div class="empty-icon"><svg lucideUtensils class="lucide-icon-xl text-muted"></svg></div>
+          <h3 class="empty-title">{{ 'menu.noProducts' | translate }}</h3>
+          <p class="empty-desc">{{ isArabic() ? 'جرب تغيير خيارات البحث أو كتابة كلمة أخرى مثل بيتزا أو شوكولاتة.' : 'Try clearing your filters or searching for something else like "pepperoni" or "chocolate".' }}</p>
+          <button class="btn btn-tomato" (click)="resetFilters()">{{ 'menu.clearFilters' | translate }}</button>
+        </div>
+      } @else {
+        <div class="products-grid">
+          @for (product of products(); track product._id) {
+            <app-product-card [product]="product"></app-product-card>
+          }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination-bar">
+            <button
+              class="page-btn"
+              [disabled]="currentPage() === 1"
+              (click)="changePage(currentPage() - 1)"
+            >
+              <i class="fa-solid fa-chevron-left flip-rtl"></i>
+            </button>
+
+            @for (page of getPageArray(); track page) {
+              <button
+                class="page-btn"
+                [class.active]="currentPage() === page"
+                (click)="changePage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              class="page-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="changePage(currentPage() + 1)"
+            >
+              <i class="fa-solid fa-chevron-right flip-rtl"></i>
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </section>
+</div>

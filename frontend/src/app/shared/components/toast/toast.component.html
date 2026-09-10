@@ -1,0 +1,23 @@
+<div class="toast-container" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast-item" [ngClass]="'toast-' + toast.type">
+      <div class="toast-icon">
+        @switch (toast.type) {
+          @case ('success') { <svg lucideCheckCircle2 class="lucide-icon-md"></svg> }
+          @case ('error') { <svg lucideAlertCircle class="lucide-icon-md"></svg> }
+          @case ('warning') { <svg lucideAlertTriangle class="lucide-icon-md"></svg> }
+          @default { <svg lucideBell class="lucide-icon-md"></svg> }
+        }
+      </div>
+      <div class="toast-content">
+        @if (toast.title) {
+          <div class="toast-title">{{ toast.title }}</div>
+        }
+        <div class="toast-message">{{ toast.message }}</div>
+      </div>
+      <button class="toast-close" (click)="toastService.remove(toast.id)" aria-label="Close">
+        <svg lucideX class="lucide-icon-xs"></svg>
+      </button>
+    </div>
+  }
+</div>

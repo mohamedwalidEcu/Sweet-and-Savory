@@ -1,0 +1,453 @@
+<!-- 1. HERO SECTION (EDITORIAL ASYMMETRIC DESIGN) -->
+<section class="hero-section">
+  <div class="container-wide hero-container">
+    <!-- Content Column -->
+    <div class="hero-content">
+      <div class="hero-eyebrow animate-fade-in">
+        <span class="hero-sparkle">✦</span>
+        <span>{{ 'hero.tagline' | translate }}</span>
+      </div>
+
+      <h1 class="display-hero hero-headline animate-fade-in">
+        <span class="hero-word-sweet">{{ 'hero.titleLine1' | translate }}</span><br />
+        <span class="hero-word-savory">{{ 'hero.titleLine2' | translate }}</span><br />
+        <span class="hero-word-together">{{ 'hero.titleLine3' | translate }}</span>
+      </h1>
+
+      <p class="lead-text hero-description">
+        {{ 'hero.subtitle' | translate }}
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/menu" class="btn btn-lg btn-tomato">
+          <span>{{ 'hero.ctaMenu' | translate }}</span>
+          <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+        </a>
+
+        <a routerLink="/product/the-sweet-and-savory-duo" class="btn btn-lg btn-outline">
+          <span>{{ 'hero.ctaCombo' | translate }}</span>
+          <svg lucideSparkles class="lucide-icon-sm text-gold"></svg>
+        </a>
+      </div>
+
+      <!-- Proof & Micro-social Metric -->
+      <div class="hero-social-proof">
+        <div class="proof-avatars">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Foodie 1" class="trust-avatar" />
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Foodie 2" class="trust-avatar" />
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Foodie 3" class="trust-avatar" />
+        </div>
+        <div class="trust-text">
+          <app-star-rating [rating]="4.9" [showNumber]="false"></app-star-rating>
+          <span class="trust-caption">{{ 'hero.orderStat' | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asymmetric Visual Composition -->
+    <div class="hero-visual-art">
+      <div class="hero-image-card card-pizza animate-float">
+        <img
+          src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1000&q=80"
+          alt="Stone-baked Pepperoni Pizza"
+          class="hero-img"
+        />
+        <div class="food-stamp stamp-savory">
+          <span class="stamp-icon"><svg lucidePizza class="lucide-icon-sm text-tomato"></svg></span>
+          <div class="stamp-info">
+            <strong>{{ 'hero.stoneBaked' | translate }}</strong>
+            <small>{{ 'hero.stoneBakedSub' | translate }}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-image-card card-donut animate-float-reverse">
+        <img
+          src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80"
+          alt="Valrhona Dark Chocolate Donut"
+          class="hero-img"
+        />
+        <div class="food-stamp stamp-sweet">
+          <span class="stamp-icon"><svg lucideDonut class="lucide-icon-sm text-pink"></svg></span>
+          <div class="stamp-info">
+            <strong>{{ 'hero.donutGlaze' | translate }}</strong>
+            <small>{{ 'hero.donutGlazeSub' | translate }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Badge -->
+      <div class="floating-deal-badge">
+        <div class="deal-icon"><svg lucideFlame class="lucide-icon-sm text-gold"></svg></div>
+        <div class="deal-content">
+          <strong>{{ 'hero.comboDeal' | translate }}</strong>
+          <span>{{ 'hero.comboDealSub' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. DISTINCT CATEGORY EXPERIENCE -->
+<section class="section categories-section">
+  <div class="container-wide">
+    <div class="section-header">
+      <span class="tag-script">{{ 'categories.subtitle' | translate }}</span>
+      <h2 class="display-section">{{ 'categories.title' | translate }}</h2>
+    </div>
+
+    <div class="category-cards-grid">
+      <!-- Pizza Card (Terracotta Style) -->
+      <a routerLink="/menu" [queryParams]="{ category: 'pizza' }" class="cat-card cat-pizza">
+        <div class="cat-bg-accent"></div>
+        <div class="cat-content">
+          <span class="cat-badge">{{ 'categories.stoneBakedBadge' | translate }}</span>
+          <h3 class="cat-title">{{ 'categories.pizzaTitle' | translate }}</h3>
+          <p class="cat-desc">{{ 'categories.pizzaDesc' | translate }}</p>
+          <div class="cat-cta">
+            <span>{{ 'categories.explorePizzas' | translate }}</span>
+            <svg lucideArrowRight class="lucide-icon-xs flip-rtl"></svg>
+          </div>
+        </div>
+        <div class="cat-image-wrap">
+          <img src="https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=600&q=80" alt="Pizza" class="cat-img" />
+        </div>
+      </a>
+
+      <!-- Donut Card (Berry Pink Style) -->
+      <a routerLink="/menu" [queryParams]="{ category: 'donuts' }" class="cat-card cat-donut">
+        <div class="cat-bg-accent"></div>
+        <div class="cat-content">
+          <span class="cat-badge">{{ 'categories.handGlazedBadge' | translate }}</span>
+          <h3 class="cat-title">{{ 'categories.donutsTitle' | translate }}</h3>
+          <p class="cat-desc">{{ 'categories.donutsDesc' | translate }}</p>
+          <div class="cat-cta">
+            <span>{{ 'categories.exploreDonuts' | translate }}</span>
+            <svg lucideArrowRight class="lucide-icon-xs flip-rtl"></svg>
+          </div>
+        </div>
+        <div class="cat-image-wrap">
+          <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=600&q=80" alt="Donuts" class="cat-img" />
+        </div>
+      </a>
+
+      <!-- Combos Card (Bold Charcoal & Gold) -->
+      <a routerLink="/menu" [queryParams]="{ category: 'combos' }" class="cat-card cat-combo">
+        <div class="cat-bg-accent"></div>
+        <div class="cat-content">
+          <span class="cat-badge">{{ 'categories.bestValueBadge' | translate }}</span>
+          <h3 class="cat-title">{{ 'categories.combosTitle' | translate }}</h3>
+          <p class="cat-desc">{{ 'categories.combosDesc' | translate }}</p>
+          <div class="cat-cta">
+            <span>{{ 'categories.exploreCombos' | translate }}</span>
+            <svg lucideArrowRight class="lucide-icon-xs flip-rtl"></svg>
+          </div>
+        </div>
+        <div class="cat-image-wrap">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" alt="Combo" class="cat-img" />
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 3. FEATURED CRAVINGS SECTION -->
+<section class="section featured-section">
+  <div class="container-wide">
+    <div class="featured-top-bar">
+      <div>
+        <span class="tag-script">{{ 'featured.subtitle' | translate }}</span>
+        <h2 class="display-section">{{ 'featured.title' | translate }}</h2>
+      </div>
+
+      <!-- Quick Filter Pills -->
+      <div class="filter-pills">
+        <button
+          class="pill-btn"
+          [class.active]="selectedCategory() === 'all'"
+          (click)="filterCategory('all')"
+        >
+          <svg lucideLayoutGrid class="lucide-icon-xs"></svg>
+          <span>{{ 'featured.all' | translate }}</span>
+        </button>
+        <button
+          class="pill-btn"
+          [class.active]="selectedCategory() === 'pizza'"
+          (click)="filterCategory('pizza')"
+        >
+          <svg lucidePizza class="lucide-icon-xs text-tomato"></svg>
+          <span>{{ 'nav.pizza' | translate }}</span>
+        </button>
+        <button
+          class="pill-btn"
+          [class.active]="selectedCategory() === 'donuts'"
+          (click)="filterCategory('donuts')"
+        >
+          <svg lucideDonut class="lucide-icon-xs text-pink"></svg>
+          <span>{{ 'nav.donuts' | translate }}</span>
+        </button>
+        <button
+          class="pill-btn"
+          [class.active]="selectedCategory() === 'combos'"
+          (click)="filterCategory('combos')"
+        >
+          <svg lucideFlame class="lucide-icon-xs text-gold"></svg>
+          <span>{{ 'nav.combos' | translate }}</span>
+        </button>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-grid">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="skeleton-card"></div>
+        }
+      </div>
+    } @else {
+      <div class="products-grid">
+        @for (product of filteredProducts(); track product._id) {
+          <app-product-card [product]="product"></app-product-card>
+        }
+      </div>
+    }
+
+    <div class="featured-bottom-cta">
+      <a routerLink="/menu" class="btn btn-lg btn-dark">
+        <span>{{ 'featured.viewAllMenu' | translate }}</span>
+        <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 4. COMBO SECTION: "WHY CHOOSE SWEET OR SAVORY? CHOOSE BOTH." -->
+<section class="section combo-highlight-section">
+  <div class="container-wide">
+    <div class="combo-banner">
+      <div class="combo-banner-content">
+        <span class="combo-eyebrow">{{ 'combos.eyebrow' | translate }}</span>
+        <h2 class="combo-heading">
+          {{ 'combos.heading' | translate }}<br />
+          <span class="highlight-both">{{ 'combos.headingHighlight' | translate }}</span>
+        </h2>
+        <p class="combo-desc">
+          {{ 'combos.desc' | translate }}
+        </p>
+
+        <div class="combo-features">
+          <div class="combo-feature-item">
+            <span class="cf-icon"><svg lucidePizza class="lucide-icon-sm text-tomato"></svg></span>
+            <span>{{ 'combos.item1' | translate }}</span>
+          </div>
+          <span class="cf-plus">+</span>
+          <div class="combo-feature-item">
+            <span class="cf-icon"><svg lucideDonut class="lucide-icon-sm text-pink"></svg></span>
+            <span>{{ 'combos.item2' | translate }}</span>
+          </div>
+          <span class="cf-plus">+</span>
+          <div class="combo-feature-item">
+            <span class="cf-icon"><svg lucideCupSoda class="lucide-icon-sm text-gold"></svg></span>
+            <span>{{ 'combos.item3' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="combo-cta-row">
+          <a routerLink="/product/the-sweet-and-savory-duo" class="btn btn-lg btn-tomato">
+            <span>{{ 'combos.builderBtn' | translate }}</span>
+            <svg lucideSparkles class="lucide-icon-sm"></svg>
+          </a>
+          <span class="combo-price-tag">{{ 'combos.fromPrice' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="combo-banner-visual">
+        <div class="combo-composition">
+          <img
+            src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
+            alt="Sweet and Savory Combo Feast"
+            class="combo-hero-img"
+          />
+          <div class="combo-discount-badge">
+            <span class="discount-num">20%</span>
+            <span class="discount-lbl">{{ 'combos.off' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. OFFERS & PROMOTIONS SECTION -->
+<section class="section offers-section">
+  <div class="container-wide">
+    <div class="section-header">
+      <span class="tag-script">{{ 'offers.subtitle' | translate }}</span>
+      <h2 class="display-section">{{ 'offers.title' | translate }}</h2>
+    </div>
+
+    <div class="offers-grid">
+      <div class="offer-card offer-card-tomato">
+        <div class="offer-header">
+          <span class="offer-pill">10% OFF</span>
+          <span class="offer-type">{{ 'offers.firstOrder' | translate }}</span>
+        </div>
+        <h3 class="offer-title">{{ 'offers.welcomeTitle' | translate }}</h3>
+        <p class="offer-desc">{{ 'offers.welcomeDesc' | translate }}</p>
+        <div class="coupon-box">
+          <code class="coupon-code">WELCOME10</code>
+          <button class="copy-btn" (click)="copyCoupon('WELCOME10')">
+            <svg lucideCopy class="lucide-icon-xs"></svg>
+            <span>{{ 'offers.copyCode' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="offer-card offer-card-pink">
+        <div class="offer-header">
+          <span class="offer-pill">15% OFF</span>
+          <span class="offer-type">{{ 'offers.weekendSpecial' | translate }}</span>
+        </div>
+        <h3 class="offer-title">{{ 'offers.comboTitle' | translate }}</h3>
+        <p class="offer-desc">{{ 'offers.comboDesc' | translate }}</p>
+        <div class="coupon-box">
+          <code class="coupon-code">COMBO15</code>
+          <button class="copy-btn" (click)="copyCoupon('COMBO15')">
+            <svg lucideCopy class="lucide-icon-xs"></svg>
+            <span>{{ 'offers.copyCode' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="offer-card offer-card-gold">
+        <div class="offer-header">
+          <span class="offer-pill">20% OFF</span>
+          <span class="offer-type">{{ 'offers.midweekSweet' | translate }}</span>
+        </div>
+        <h3 class="offer-title">{{ 'offers.sweetTitle' | translate }}</h3>
+        <p class="offer-desc">{{ 'offers.sweetDesc' | translate }}</p>
+        <div class="coupon-box">
+          <code class="coupon-code">SWEET20</code>
+          <button class="copy-btn" (click)="copyCoupon('SWEET20')">
+            <svg lucideCopy class="lucide-icon-xs"></svg>
+            <span>{{ 'offers.copyCode' | translate }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. BRAND STORY (EDITORIAL STORYTELLING) -->
+<section class="section story-section">
+  <div class="container-wide story-inner">
+    <div class="story-image-side">
+      <div class="story-img-frame">
+        <img
+          src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80"
+          alt="Kitchen craftsmanship"
+          class="story-photo"
+        />
+      </div>
+    </div>
+
+    <div class="story-content-side">
+      <span class="tag-script">{{ 'story.eyebrow' | translate }}</span>
+      <h2 class="display-section story-headline">{{ 'story.title' | translate }}</h2>
+      <p class="story-p">{{ 'story.p1' | translate }}</p>
+      <p class="story-p">{{ 'story.p2' | translate }}</p>
+
+      <div class="story-stats-grid">
+        <div class="stat-block">
+          <span class="stat-num">{{ 'story.stat1Num' | translate }}</span>
+          <span class="stat-lbl">{{ 'story.stat1Label' | translate }}</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-num">{{ 'story.stat2Num' | translate }}</span>
+          <span class="stat-lbl">{{ 'story.stat2Label' | translate }}</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-num">{{ 'story.stat3Num' | translate }}</span>
+          <span class="stat-lbl">{{ 'story.stat3Label' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. REAL CUSTOMER REVIEWS -->
+<section class="section reviews-section">
+  <div class="container-wide">
+    <div class="section-header">
+      <span class="tag-script">{{ isArabic() ? 'تقييمات وتجارب العملاء' : 'Verified Foodie Reviews' }}</span>
+      <h2 class="display-section">{{ isArabic() ? 'محبوب من عشاق البيتزا والدوناتس' : 'Loved by Pizza & Donut Fanatics' }}</h2>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-meta">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Layla" class="reviewer-img" />
+            <div>
+              <h4 class="reviewer-name">{{ isArabic() ? 'ليلى السيد' : 'Layla El-Sayed' }}</h4>
+              <span class="reviewer-badge"><svg lucideCheckCircle2 class="lucide-icon-xs"></svg> {{ isArabic() ? 'مشتري مؤكد' : 'Verified Purchase' }}</span>
+            </div>
+          </div>
+          <app-star-rating [rating]="5" [showNumber]="false"></app-star-rating>
+        </div>
+        <p class="review-quote">{{ isArabic() ? 'صوص الشوكولاتة الفالرونا شيء لا يوصف داخل الدوناتس! متوازنة تماماً ومش مسكرة بزيادة.' : '"The Valrhona ganache is restaurant-quality fine dining inside a donut. Not overly sugary, perfectly balanced bitter-sweet chocolate."' }}</p>
+        <div class="review-product">{{ isArabic() ? 'تم تقييم:' : 'Reviewed:' }} <strong>Dark Cocoa Velvet Donut</strong></div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-meta">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Karim" class="reviewer-img" />
+            <div>
+              <h4 class="reviewer-name">{{ isArabic() ? 'كريم منصور' : 'Karim Mansour' }}</h4>
+              <span class="reviewer-badge"><svg lucideCheckCircle2 class="lucide-icon-xs"></svg> {{ isArabic() ? 'مشتري مؤكد' : 'Verified Purchase' }}</span>
+            </div>
+          </div>
+          <app-star-rating [rating]="5" [showNumber]="false"></app-star-rating>
+        </div>
+        <p class="review-quote">{{ isArabic() ? 'عجينة البيتزا هشة وخطيرة والبيبروني المقرمش مع رشة عسل الهابانيرو نقل التجربة لمستوى تاني خالص.' : '"The cup and char pepperoni is unreal. You can actually taste the quality of the beef and that habanero honey gave it the ultimate kick."' }}</p>
+        <div class="review-product">{{ isArabic() ? 'تم تقييم:' : 'Reviewed:' }} <strong>Smoky Pepperoni Blast</strong></div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer-meta">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Sarah" class="reviewer-img" />
+            <div>
+              <h4 class="reviewer-name">{{ isArabic() ? 'سارة ممدوح' : 'Sarah Mitchell' }}</h4>
+              <span class="reviewer-badge"><svg lucideCheckCircle2 class="lucide-icon-xs"></svg> {{ isArabic() ? 'مشتري مؤكد' : 'Verified Purchase' }}</span>
+            </div>
+          </div>
+          <app-star-rating [rating]="5" [showNumber]="false"></app-star-rating>
+        </div>
+        <p class="review-quote">{{ isArabic() ? 'أفضل كراست بيتزا في القاهرة بلا منازع! فكرة الكومبو إنه يوصل سخن وطازة مع الدوناتس ممتازة جداً.' : '"Hands down the best crust in the city! The hot honey combo with their dough is sheer culinary magic. Ordering again tonight."' }}</p>
+        <div class="review-product">{{ isArabic() ? 'تم تقييم:' : 'Reviewed:' }} <strong>Margherita Supreme</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FINAL HIGH-IMPACT CTA -->
+<section class="final-cta-section">
+  <div class="container-wide cta-box">
+    <div class="cta-inner">
+      <span class="tag-script cta-tag">{{ isArabic() ? 'عشاء وحلويات اليوم' : "Tonight's Dinner & Dessert" }}</span>
+      <h2 class="display-section cta-title">{{ 'cta.title' | translate }}</h2>
+      <p class="cta-desc">{{ 'cta.subtitle' | translate }}</p>
+      <div class="cta-buttons">
+        <a routerLink="/menu" class="btn btn-lg btn-tomato">
+          <span>{{ 'cta.orderNow' | translate }}</span>
+          <svg lucideArrowRight class="lucide-icon-sm flip-rtl"></svg>
+        </a>
+        <a routerLink="/menu" class="btn btn-lg btn-outline">
+          <span>{{ 'cta.viewMenu' | translate }}</span>
+          <svg lucideUtensils class="lucide-icon-sm"></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
