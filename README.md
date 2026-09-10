@@ -211,7 +211,7 @@ npx ng build
 
 ---
 
-## 🔌 API Endpoints Summary
+##  API Endpoints Summary
 
 ### Authentication
 - `POST /api/auth/register` — Register a new customer
@@ -252,7 +252,7 @@ npx ng build
 
 ---
 
-## ⚡ Real-Time Socket.IO Architecture
+##  Real-Time Socket.IO Architecture
 
 When an order status is updated by the kitchen or admin:
 1. **Admin triggers update**: Admin changes status from `pending` to `preparing` via the admin dashboard.
@@ -262,7 +262,7 @@ When an order status is updated by the kitchen or admin:
 
 ---
 
-## 🌐 Arabic RTL & Internationalization
+##  Arabic RTL & Internationalization
 
 Click the **العربية** button in the top announcement bar:
 - The entire layout switches to Right-to-Left (`dir="rtl"`).
